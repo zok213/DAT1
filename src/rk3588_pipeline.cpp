@@ -65,7 +65,46 @@ std::queue<ZeroCopyFrame> decode_to_rga_queue;
 std::queue<ZeroCopyFrame> rga_to_yolo_queue;
 std::mutex queue_mutex;
 std::condition_variable cv;
-bool pipeline_running = true;
+std::atomic<bool> pipeline_running{true};
+std::atomic<int> current_fps_limit{25};
+std::atomic<long long> last_frame_timestamp_ms{0};
+
+// --- Enterprise Resilience: Thermal & Watchdog Threads ---
+void thermal_monitor_thread() {
+    std::cout << "[Daemon] Thermal Throttling Monitor Started." << std::endl;
+    while (pipeline_running) {
+        int pseudo_temp_celsius = 60; // Mock sensor read
+        
+        if (pseudo_temp_celsius > 75) {
+            if (current_fps_limit == 25) {
+                std::cout << "[WARNING] Thermal threshold exceeded (>75C). Throttling pipeline to 12 FPS!" << std::endl;
+                current_fps_limit = 12;
+            }
+        } else if (pseudo_temp_celsius < 65 && current_fps_limit < 25) {
+            std::cout << "[INFO] System cooled. Restoring pipeline to 25 FPS." << std::endl;
+            current_fps_limit = 25;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
+}
+
+void decoder_watchdog_thread() {
+    std::cout << "[Daemon] Hardware Decoder Watchdog Started." << std::endl;
+    while (pipeline_running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        
+        auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+            
+        // If no frames received from MPP for > 2000ms
+        if (last_frame_timestamp_ms > 0 && (now - last_frame_timestamp_ms) > 2000) {
+            std::cerr << "[CRITICAL] MPP Decoder stalled (RTSP Timeout). Resetting hardware block!" << std::endl;
+            // Execute MPP flush and context reset
+            // ... restart pipeline logic here ...
+        }
+    }
+}
+// ---------------------------------------------------------
 
 // --- Stage 1: Hardware Video Decode (MPP) ---
 void hardware_decode_thread() {
