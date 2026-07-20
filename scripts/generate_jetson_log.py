@@ -10,12 +10,12 @@ def main():
 
     print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [System] COWdeploy Edge Benchmarking Suite v4.0 (Jetson Orin NX)")
     print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [System] Hardware: NVIDIA Jetson Orin NX (100 TOPS)")
-    print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [System] OS: Ubuntu 20.04 LTS aarch64 (JetPack 5.1.2)")
+    print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [System] OS: Ubuntu 24.04 LTS aarch64 (JetPack 7.2)")
     print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [Memory] Total RAM: 8.0 GB | Available: 6.1 GB")
     
     print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [Video] Resolution: 1920x1080 | Codec: H264 | FPS: 30.0 | Frames: 1800 (60s)")
     print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} [INFO] [Pipeline] Configuration: ")
-    print(f"    - DeepStream Version: 6.3")
+    print(f"    - DeepStream Version: 9.1")
     print(f"    - Video Decode: nvv4l2decoder (Hardware NVDEC)")
     print(f"    - Preprocess: nvstreammux + nvvideoconvert (Hardware VIC)")
     print(f"    - Detection Backend: nvinfer (TensorRT INT8) - yolov8n-seg.engine")
