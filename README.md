@@ -50,6 +50,27 @@ xychart-beta
 
 The single most critical optimization in Edge AI is **Zero-Copy Memory**. Moving HD video frames between the CPU, GPU, and NPU destroys throughput. Each of our branches implements the specific zero-copy paradigm required by its hardware:
 
+```mermaid
+graph TD
+    subgraph Jetson_Orin [NVIDIA Jetson Orin]
+        direction LR
+        NVDEC[NVDEC Decoder] -- NVMM Buffer --> TRT[TensorRT Engine]
+    end
+
+    subgraph Qualcomm_RB3 [Qualcomm RB3 Gen2]
+        direction LR
+        ADRENO[Adreno GPU] -- DMA-BUF / ION FD --> HEX[Hexagon DSP]
+    end
+
+    subgraph Radxa_CM5 [Radxa CM5 RK3588]
+        direction LR
+        MPP[MPP Decoder] -- dma_buf --> RGA[RGA Resizer] -- dma_buf --> RKNN[RKNN NPU]
+    end
+    
+    Jetson_Orin ~~~ Qualcomm_RB3
+    Qualcomm_RB3 ~~~ Radxa_CM5
+```
+
 ### The NVIDIA Architecture (`jetsonorin`)
 NVIDIA relies on **NVMM (NVIDIA Memory Management)**. Video is decoded via `NVDEC`, batched via `nvstreammux`, and processed via `TensorRT`—all while residing entirely in the Unified GPU Memory. The CPU utilization drops to ~5%.
 
