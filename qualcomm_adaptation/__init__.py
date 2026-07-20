@@ -1,1 +1,0 @@
-"""Qualcomm BCS Adaptation Package"""
