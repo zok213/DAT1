@@ -83,3 +83,26 @@ graph TD
     Q -. Pipelining Control .-> Y
     Q -. Pipelining Control .-> D
 ```
+
+---
+
+## 🚀 Quick Start (Running on RK3588)
+
+To physically deploy and run this architecture on your Radxa CM5 edge board, I have provided the complete native C++ implementation and build tools. 
+
+### 1. Build the Native C++ Pipeline
+First, compile the proprietary Rockchip source code (located in `src/rk3588_pipeline.cpp`) into an executable binary using the provided bash script.
+
+```bash
+chmod +x build_rk3588.sh
+./build_rk3588.sh
+```
+*This invokes `CMakeLists.txt` and compiles the pipeline into `build/rk3588_cow_bcs`.*
+
+### 2. Execute via Python Wrapper
+To execute the pipeline and stream the logs securely to your terminal, use the provided Python deployment wrapper.
+
+```bash
+python3 scripts/run_rk3588.py
+```
+*This script automatically passes the `.rknn` models to the C++ binary and validates the 25 FPS throughput.*
