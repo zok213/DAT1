@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cow-bcs-edge-daemon
+  namespace: agritech-edge
+  labels:
+    app: cow-bcs
+spec:
+  selector:
+    matchLabels:
+      app: cow-bcs
+  template:
+    metadata:
+      labels:
+        app: cow-bcs
+    spec:
+      hostNetwork: true # Required for direct RTSP camera access
+      hostIPC: true     # Required for zero-copy memory buffers
+      nodeSelector:
+        edge-tier: inference-node
+      containers:
+      - name: bcs-pipeline
+        # In a real fleet, this image is dynamically injected based on node architecture
+        image: your-registry.com/cow-bcs-edge:latest
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true # Required for direct hardware access
+        resources:
+          limits:
+            memory: "4Gi"
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        # Mount the SoC hardware accelerators directly into the container
+        - mountPath: /dev
+          name: dev-dir
+        - mountPath: /sys
+          name: sys-dir
+        # Provide access to the IPC namespace for DMA-BUF
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: dev-dir
+        hostPath:
+          path: /dev
+      - name: sys-dir
+        hostPath:
+          path: /sys
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi

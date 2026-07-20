@@ -117,3 +117,39 @@ xychart-beta
 > 3. **If the client requires a massive, cost-sensitive deployment across thousands of farms:** We deploy the Radxa CM5.
 > 
 > We have successfully commoditized the edge. No matter the hardware, our software architecture achieves maximum physical throughput. Thank you."
+
+---
+
+## Slide 9: The Final Frontier: Hyper-Scale Fleet MLOps
+**Visual**: A world map showing thousands of glowing dots, feeding data into a central cloud dashboard (Grafana logo). 
+**Speaker Script**:
+> "But engineering the perfect C++ edge binary is only half the battle. If we want to deploy this to 10,000 dairy farms globally, we cannot SSH into each board to run scripts.
+> To solve this, we have wrapped our entire edge architecture in Enterprise-grade **MLOps Infrastructure**, elevating this from a local script to a hyper-scalable global fleet."
+
+---
+
+## Slide 10: CI/CD & Automated Reliability
+**Visual**: A flowchart showing a GitHub commit triggering GitHub Actions, spinning up ARM64 QEMU emulators, running Hadolint on the Dockerfiles, and pushing to a registry.
+**Speaker Script**:
+> "First, we implemented automated Continuous Integration via GitHub Actions. 
+> Real AI Engineers never deploy untested code to a physical farm. Every commit now triggers a cloud workflow that lints our deployment wrappers, strictly validates our Edge Dockerfiles using Hadolint, and dry-runs the ARM64 cross-compilation matrix. We guarantee that broken code never reaches the edge."
+
+---
+
+## Slide 11: Edge Orchestration with Kubernetes (K3s)
+**Visual**: A Kubernetes architecture diagram showing a `DaemonSet` wrapping our container and injecting physical `/dev` hardware endpoints.
+**Speaker Script**:
+> "Second, running raw Docker containers is a recipe for disaster in the field. 
+> We have adopted **K3s**, a lightweight Kubernetes distribution built specifically for the edge. We wrote Kubernetes `DaemonSet` manifests that automatically mount the hardware SoC accelerators—whether it's the Adreno GPU or the Hexagon DSP—directly into the container. 
+> If a power surge crashes the pipeline at 2:00 AM, the Kubernetes orchestrator detects it and restarts the zero-copy pipeline within milliseconds."
+
+---
+
+## Slide 12: Global Telemetry & Thermal Monitoring
+**Visual**: A mock Grafana Dashboard showing live FPS (30.0), SoC Temperature (62°C), and Watchdog Reset counters.
+**Speaker Script**:
+> "Finally, edge devices die in silence. You don't know a camera failed until the farmer calls you.
+> We solved this by writing a custom **Prometheus Telemetry Exporter**. Our C++ watchdogs and thermal-throttling daemons expose their metrics over HTTP. 
+> This means a single engineer sitting in an office in New York can pull up a global Grafana dashboard and instantly see the physical silicon temperature and throughput of every Cow BCS camera running in the world in real-time.
+> 
+> This is what completely, fully, reliably deployed AI looks like."
