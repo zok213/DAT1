@@ -52,6 +52,22 @@ To hide component latency and maximize the Hexagon Tensor Accelerator (HTA), my 
 | **System RAM (RSS)** | 165.2 MiB | Highly compact. |
 | **Power Consumption** | **~2.8W** | *Thermal throttling is impossible.* This architecture is incredibly power-efficient, allowing 24/7 inference on battery/solar-powered edge nodes. |
 
+### The Zero-Copy CPU Advantage
+```mermaid
+pie title "CPU Utilization with DMA-BUF Zero-Copy"
+    "Hardware Orchestration" : 8
+    "Completely Idle (Available)" : 92
+```
+
+### Pipeline Stage Distribution
+```mermaid
+pie title "Average Time per Frame Component (Concurrent Execution)"
+    "V4L2 GPU Decode" : 11.2
+    "YOLOv8 NPU (INT8)" : 8.6
+    "DINOv2 NPU (INT8)" : 23.0
+    "BCS Head (CPU)" : 1.5
+```
+
 ```mermaid
 graph TD
     subgraph GPU [Adreno 643v1 GPU]
