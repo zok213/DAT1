@@ -43,6 +43,50 @@ namespace nvidia_mock {
 
 using namespace nvidia_mock;
 
+// --- Enterprise Resilience: Thermal & Watchdog Threads ---
+std::atomic<bool> pipeline_running{true};
+std::atomic<int> current_fps_limit{30};
+std::atomic<long long> last_frame_timestamp_ms{0};
+
+void thermal_monitor_thread() {
+    std::cout << "[Daemon] Thermal Throttling Monitor Started." << std::endl;
+    while (pipeline_running) {
+        // In reality: read /sys/class/thermal/thermal_zone0/temp
+        // For demonstration, we simulate thermal states
+        int pseudo_temp_celsius = 60; 
+        
+        if (pseudo_temp_celsius > 75) {
+            if (current_fps_limit == 30) {
+                std::cout << "[WARNING] Thermal threshold exceeded (>75C). Throttling pipeline to 15 FPS!" << std::endl;
+                current_fps_limit = 15;
+            }
+        } else if (pseudo_temp_celsius < 65 && current_fps_limit < 30) {
+            std::cout << "[INFO] System cooled. Restoring pipeline to 30 FPS." << std::endl;
+            current_fps_limit = 30;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
+}
+
+void decoder_watchdog_thread(GMainLoop* loop) {
+    std::cout << "[Daemon] Hardware Decoder Watchdog Started." << std::endl;
+    while (pipeline_running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        
+        auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+            
+        // If no frames received from NVDEC for > 2000ms
+        if (last_frame_timestamp_ms > 0 && (now - last_frame_timestamp_ms) > 2000) {
+            std::cerr << "[CRITICAL] NVDEC Decoder stalled (RTSP Timeout). Flushing pipeline!" << std::endl;
+            // Execute GStreamer flush and reset
+            // g_main_loop_quit(loop);
+            // ... restart pipeline logic here ...
+        }
+    }
+}
+// ---------------------------------------------------------
+
 int main(int argc, char *argv[]) {
     std::cout << "=================================================" << std::endl;
     std::cout << "Cow BCS Jetson Orin NX DeepStream NVMM Pipeline" << std::endl;

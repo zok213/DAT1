@@ -1,0 +1,26 @@
+FROM nvcr.io/nvidia/l4t-deepstream:7.1.0-samples
+
+# Setup Cow BCS Jetson Orin Edge Environment
+WORKDIR /opt/cowdeploy
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    python3 \
+    python3-pip \
+    libglib2.0-dev \
+    libgstreamer1.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the Jetson repository source code
+COPY src/ /opt/cowdeploy/src/
+COPY CMakeLists.txt /opt/cowdeploy/
+COPY build_jetson.sh /opt/cowdeploy/
+COPY scripts/ /opt/cowdeploy/scripts/
+
+# Compile the native NVMM DeepStream pipeline
+RUN chmod +x build_jetson.sh && ./build_jetson.sh
+
+# Run the deployment wrapper by default
+CMD ["python3", "scripts/run_jetson.py"]
