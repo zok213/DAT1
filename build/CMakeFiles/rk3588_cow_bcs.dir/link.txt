@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/rk3588_cow_bcs.dir/src/rk3588_pipeline.cpp.o -o rk3588_cow_bcs  -lpthread 

@@ -1,0 +1,3 @@
+/home/ubuntu/COWdeploy/build/CMakeFiles/rk3588_cow_bcs.dir
+/home/ubuntu/COWdeploy/build/CMakeFiles/edit_cache.dir
+/home/ubuntu/COWdeploy/build/CMakeFiles/rebuild_cache.dir
