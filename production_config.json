@@ -1,0 +1,33 @@
+{
+  "model": "BcsHead (view-agnostic single-view scorer)",
+  "backbone": "dinov2_vits14",
+  "in_dim": 384,
+  "d_model": 128,
+  "classes": [
+    "thin",
+    "ideal",
+    "fat"
+  ],
+  "preprocess": {
+    "resize": 224,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "note": "crop cow via YOLOv8-seg mask, resize 224, ImageNet-normalize, DINOv2 CLS"
+  },
+  "honest_qwk_grouped5fold_perview": {
+    "pooled": 0.34,
+    "CowDB": 0.486,
+    "CowDatabase": 0.639,
+    "CowDatabase2": -0.046
+  },
+  "n_train_samples": 716,
+  "caveat": "QWK measured within research datasets. Real-CCTV is OOD (deployment gap): separability 1.0 vs train, model over-confident off-domain. Re-validate on target video and treat scores as SCREENING, show confidence."
+}

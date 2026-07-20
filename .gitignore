@@ -1,0 +1,24 @@
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore large media/model files (GitHub limit is 100MB)
+*.mp4
+*.pt
+*.onnx
+*.bin
+*.tflite
+*.dlc
+*.zst
+debian-binary
+control.tar.zst
+data.tar.zst
+
+# Ignore wheels and dependencies
+wheels/
+__pycache__/
+*.pyc
+
+# Ignore temp files
+.omo/
+qnn_sdk/

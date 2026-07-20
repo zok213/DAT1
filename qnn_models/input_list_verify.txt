@@ -1,0 +1,1 @@
+/home/ubuntu/COWdeploy/qnn_models/input_proper.raw
