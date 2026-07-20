@@ -1,0 +1,24 @@
+FROM ubuntu:24.04
+
+# Setup Cow BCS Qualcomm RB3 Gen2 Edge Environment
+WORKDIR /opt/cowdeploy
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    python3 \
+    python3-pip \
+    libopencv-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the Qualcomm repository source code
+COPY optimization_suite/ /opt/cowdeploy/optimization_suite/
+COPY scripts/ /opt/cowdeploy/scripts/
+COPY build_qualcomm.sh /opt/cowdeploy/
+
+# Compile the native C++ pipeline
+RUN chmod +x build_qualcomm.sh && ./build_qualcomm.sh
+
+# Run the deployment wrapper by default
+CMD ["python3", "scripts/run_qualcomm.py"]
