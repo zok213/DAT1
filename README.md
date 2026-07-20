@@ -81,3 +81,26 @@ graph TD
     Q -. Pipelining Control .-> Y
     Q -. Pipelining Control .-> D
 ```
+
+---
+
+## 🚀 Quick Start (Running on Jetson Orin)
+
+To physically deploy and run this architecture on your NVIDIA Jetson Orin edge board, I have provided the complete native C++ implementation and build tools. 
+
+### 1. Build the Native C++ Pipeline
+First, compile the proprietary NVIDIA DeepStream C++ source code (located in `src/jetson_pipeline.cpp`) into an executable binary using the provided bash script.
+
+```bash
+chmod +x build_jetson.sh
+./build_jetson.sh
+```
+*This invokes `CMakeLists.txt` and compiles the pipeline into `build/jetson_cow_bcs`, dynamically linking against your JetPack 7.2 GStreamer libraries.*
+
+### 2. Execute via Python Wrapper
+To execute the pipeline and stream the logs securely to your terminal, use the provided Python deployment wrapper.
+
+```bash
+python3 scripts/run_jetson.py
+```
+*This script launches the C++ binary and validates the 30 FPS NVMM throughput.*
