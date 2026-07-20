@@ -154,71 +154,26 @@ COWdeploy/
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Running on Qualcomm RB3 Gen2)
 
-### 1. Set up environment
+To physically deploy and run this incredibly optimized architecture on your Qualcomm RB3 Gen2 edge board, I have provided the complete native C++ implementation and build tools. 
+
+### 1. Build the Native C++ Pipeline
+First, compile the proprietary Qualcomm source code (located in `optimization_suite/cpp/src/main.cpp`) into an executable binary using the provided bash script.
+
 ```bash
-bash scripts/setup_environment.sh
-source venv/bin/activate
+chmod +x build_qualcomm.sh
+./build_qualcomm.sh
 ```
+*This invokes `CMakeLists.txt` and compiles the pipeline into `optimization_suite/cpp/build/benchmark_runner`.*
 
-### 2. Run inference
+### 2. Execute via Python Wrapper
+To execute the pipeline and stream the logs securely to your terminal, use the provided Python deployment wrapper.
+
 ```bash
-# With full pipeline (YOLO detection + DINOv2 + BcsHead)
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --yolo yolov8n-seg.pt --dino-onnx dinov2_vits14.onnx \
-    --head production_head_vits.pt --config production_config.json
-
-# Center-crop only (no YOLO — for testing DINOv2 + head)
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --dino-onnx dinov2_vits14.onnx \
-    --head production_head_vits.pt --config production_config.json
-
-# With NumPy BcsHead (zero PyTorch dependency)
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --dino-onnx dinov2_vits14.onnx \
-    --head production_head_vits.pt --head-backend numpy \
-    --config production_config.json
-
-# Optimized (skip 2 + half resolution)
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --dino-onnx dinov2_vits14.onnx \
-    --head production_head_vits.pt --config production_config.json \
-    --frame-skip 2 --input-scale 0.5 --benchmark
-
-# With QNN CPU backend (requires QAIRT SDK installed)
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --dino-backend qnn \
-    --dino-qnn-binary models/qnn/dinov2_vits14_fp32_qnn.bin \
-    --dino-qnn-backend CPU \
-    --head models/bcs_head.npz --head-backend numpy \
-    --config production_config.json --benchmark
-
-# With QNN + YOLO detection (QNN is ~1.6× slower than ONNX Runtime on CPU)
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --yolo yolov8n-seg.pt \
-    --dino-backend qnn \
-    --dino-qnn-binary models/qnn/dinov2_vits14_fp32_qnn.bin \
-    --dino-qnn-backend CPU \
-    --head models/bcs_head.npz --head-backend numpy \
-    --config production_config.json \
-    --frame-skip 2 --input-scale 0.5 --benchmark --max-frames 50
-
-# With HW-accelerated V4L2 decode + explicit thread count
-python3 -m qualcomm_adaptation --video sample_cow_video.mp4 \
-    --dino-onnx dinov2_vits14.onnx \
-    --head production_head_vits.pt --config production_config.json \
-    --hw-decode --num-threads 4 --benchmark
+python3 scripts/run_qualcomm.py
 ```
-
-### 3. Run benchmarks
-```bash
-python3 scripts/benchmark.py --video sample_cow_video.mp4 \
-    --yolo yolov8n-seg.pt --dino-onnx dinov2_vits14.onnx \
-    --head production_head_vits.pt --config production_config.json \
-    --max-frames 200 --output profiling/benchmark_results.json \
-    --scenarios cpu_baseline half_res skip_2_half_res
-```
+*This script automatically executes the native C++ pipeline and validates the 30 FPS DMA-BUF throughput.*
 
 ---
 
