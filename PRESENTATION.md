@@ -113,7 +113,7 @@
 > 
 > If we let the NVIDIA Jetson Orin NX run unbounded in MAXN mode, it can hit 80+ FPS. But in a dusty, hot barn, we must restrict it to a **15 Watt Power Profile** to prevent thermal shutdown. At a strict 15W limit, the Jetson's GPU is throttled, capping the pipeline at **~31 FPS**. 
 > 
-> Remarkably, Qualcomm's RB3 Gen2 handles the exact same pipeline at a flawless **31 FPS**, meaning it matches the throughput of a 15W NVIDIA GPU. But it does so drawing only **2.8 Watts**. Why? Because Qualcomm runs DINOv2 on the Hexagon DSP—a specialized ASIC designed for matrix math, unlike NVIDIA's general-purpose GPU. Qualcomm is the absolute champion of solar-powered Edge AI."
+> Remarkably, Qualcomm's RB3 Gen2 handles the exact same pipeline at **22 FPS**, maintaining real-time processing capabilities while drawing only **2.8 Watts**. Why? Because Qualcomm runs DINOv2 on the Hexagon DSP—a specialized ASIC designed for matrix math, unlike NVIDIA's general-purpose GPU. Qualcomm remains the absolute champion of solar-powered Edge AI."
 
 ---
 

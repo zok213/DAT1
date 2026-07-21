@@ -68,18 +68,18 @@ When deploying to physical barns, power constraints are brutal. If we allow the 
 
 At a strict 15W limit, the Jetson's GPU clocks are throttled. DINOv2 ViT-B execution rises to ~18.5ms and YOLOv8-Seg to ~11ms, capping the pipeline at **~31 FPS**. 
 
-Remarkably, Qualcomm's Hexagon DSP handles the exact same pipeline at **~31 FPS**, meaning it matches the throughput of a throttled NVIDIA GPU, but it does so natively without needing to throttle.
+Remarkably, Qualcomm's Hexagon DSP handles the exact same pipeline at **~22 FPS**, maintaining real-time operability natively without needing to throttle.
 
 ```mermaid
 xychart-beta
     title "Pipeline Throughput at Restricted Edge Power (Target: 30 FPS)"
     x-axis ["NVIDIA (15W Mode)", "Qualcomm (Native)", "Radxa (Native)"]
     y-axis "Frames per Second" 0 --> 40
-    bar [31.0, 31.0, 25.0]
+    bar [31.0, 22.0, 25.0]
 ```
 
 ### 2. Power Efficiency (Estimated Watts)
-This exposes the true brilliance of Qualcomm's architecture. To achieve 31 FPS, Jetson must draw 15W on a general-purpose Ampere GPU. Qualcomm achieves the exact same 31 FPS by utilizing the **Hexagon DSP**—a highly specialized ASIC designed purely for low-power matrix multiplication—drawing just **2.8W**. Qualcomm is the undisputed champion of power efficiency for single-camera solar deployments.
+This exposes the true brilliance of Qualcomm's architecture. To achieve 31 FPS, Jetson must draw 15W on a general-purpose Ampere GPU. Qualcomm achieves **22 FPS** by utilizing the **Hexagon DSP**—a highly specialized ASIC designed purely for low-power matrix multiplication—drawing just **2.8W**. Qualcomm is the undisputed champion of power efficiency for single-camera solar deployments.
 
 ```mermaid
 xychart-beta
