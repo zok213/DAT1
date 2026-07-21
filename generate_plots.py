@@ -92,7 +92,7 @@ colors = ['#d62728', '#1f77b4', '#1f77b4', '#d62728', '#2ca02c', '#1f77b4', '#2c
 bars = ax.bar(labels, latencies, color=colors, alpha=0.8)
 
 ax.set_ylabel('DINOv2 Latency (ms) - Log Scale')
-ax.set_title('The Cost of FP32 vs Edge Quantization (TensorRT, TFLite QNN, RKNN)')
+ax.set_title('The Cost of FP32 vs Edge Quantization (DINOv2)')
 ax.set_yscale('log')
 
 def add_labels_log(ax, rects):
