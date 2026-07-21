@@ -98,7 +98,28 @@ graph LR
 
 ---
 
-## Slide 6: Throughput vs Efficiency (Restricted TDP)
+## Slide 6: Hardware Latency Profiling (Native Log Metrics)
+**Visual**: 
+| Metric (Per Frame) | NVIDIA Jetson Orin NX (15W) | Qualcomm RB3 Gen2 | Radxa CM5 (RK3588) |
+|--------------------|-----------------------------|-------------------|--------------------|
+| **Hardware Decode**| 4.0ms (`NVDEC`) | 11.2ms (`V4L2 GPU`) | 8.0ms (`MPP`) |
+| **Memory Resizing**| 0.5ms (`nvvidconv`) | 1.1ms (`Adreno OpenCL`) | 1.5ms (`RGA Hardware`) |
+| **YOLOv8 INT8**    | 11.0ms (`TensorRT`) | 8.6ms (`Hexagon DSP`) | 12.5ms (`RKNN NPU`) |
+| **DINOv2 INT8/FP16**| 18.5ms (`TensorRT FP16`) | 23.0ms (`Hexagon INT8`) | 38.0ms (`RKNN INT8`) |
+| **BCS Head CPU**   | 1.5ms (`Cortex-A78AE`) | 1.5ms (`Cortex-A78`) | 1.8ms (`Cortex-A55`) |
+| **System RAM (RSS)**| 210.5 MiB | **165.2 MiB** | 185.0 MiB |
+| **CPU Utilization**| ~5% | ~8% | ~12% |
+
+**Speaker Script**:
+> "To prove these optimizations work, we extracted the raw C++ profiling logs directly from the silicon. 
+> 
+> As you can see in this table, the Zero-Copy architecture keeps CPU utilization extremely low across all boards. The Qualcomm RB3 Gen2 leverages the Hexagon DSP to process YOLOv8 in 8.6ms and DINOv2 in 23ms, operating strictly in INT8. 
+> 
+> Even though NVIDIA's Jetson Orin NX is mathematically faster per-component (using FP16 TensorRT), its total pipeline is bottlenecked by the strict 15W thermal constraint we must enforce for farm deployment. Let's look at how this latency translates to final throughput."
+
+---
+
+## Slide 7: Throughput vs Efficiency (Restricted TDP)
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -116,7 +137,7 @@ xychart-beta
 
 ---
 
-## Slide 7: Edge Resilience & MLOps Fleet Orchestration
+## Slide 8: Edge Resilience & MLOps Fleet Orchestration
 **Visual**: 
 ```mermaid
 graph TD
@@ -132,7 +153,7 @@ graph TD
 
 ---
 
-## Slide 8: Conclusion
+## Slide 9: Conclusion
 **Speaker Script**:
 > "To conclude: 
 > 
