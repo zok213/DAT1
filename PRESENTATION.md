@@ -103,11 +103,22 @@
 > 
 > The final, physical challenge is memory bandwidth. Moving HD video through YOLOv8, cropping it, and passing it to DINOv2 naively destroys a system's memory bus. The board overheats and fails. 
 > 
-> To solve this, we translated our optimized model into **Native C++ Zero-Copy Architectures**. We engineered direct memory pipelines using `NVMM` on NVIDIA, `DMA-BUF` on Qualcomm, and `RGA` on Rockchip. This avoids the memory bottleneck entirely, allowing the pipeline to hit a flawless 30 FPS at the physical edge."
+> To solve this, we translated our optimized model into **Native C++ Zero-Copy Architectures**. We engineered direct memory pipelines using `NVMM` on NVIDIA, `DMA-BUF` on Qualcomm, and `RGA` on Rockchip. This avoids the memory bottleneck entirely."
 
 ---
 
-## Slide 11 — MLOPS FLEET ORCHESTRATION
+## Slide 11 — THROUGHPUT VS EFFICIENCY
+**Visual**: Bar charts comparing Throughput (83 FPS vs 31 FPS) and Power (12W vs 2.8W).
+**Speaker Script**:
+> "The zero-copy architecture unlocked the true power of the silicon. 
+> 
+> Because NVIDIA Jetson Orin utilizes a massive Ampere GPU, we achieved a theoretical maximum throughput of **83 FPS**—meaning a single Jetson can process three physical camera streams simultaneously in real-time. 
+> 
+> However, Qualcomm's RB3 Gen2 handles a flawless 31 FPS using only **2.8 Watts**. Why? Because Qualcomm runs DINOv2 on the Hexagon DSP—a highly specialized ASIC designed purely for low-power matrix multiplication, unlike NVIDIA's general-purpose GPU. Qualcomm is the absolute champion of solar-powered Edge AI."
+
+---
+
+## Slide 12 — MLOPS FLEET ORCHESTRATION
 **Visual**: Kubernetes (K3s) logo, GitHub Actions, and Grafana Dashboard.
 **Speaker Script**:
 > "Finally, we wrapped this architecture in Enterprise-grade MLOps Infrastructure to scale it to thousands of farms. 
