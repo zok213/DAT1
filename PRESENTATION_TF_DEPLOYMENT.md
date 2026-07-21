@@ -1,12 +1,23 @@
 # 🎤 Pitch Deck: TensorFlow Edge AI Deployment & Progression
 
-> **Purpose**: A presentation script designed SPECIFICALLY for a TensorFlow course. This script focuses 100% on the AI deployment lifecycle: from Cloud TF to Edge TFLite, INT8 Quantization, Hexagon DSP Delegates, and C++ Zero-Copy Memory paradigms, completely excluding data-science model training aspects.
+> **Purpose**: A presentation script designed SPECIFICALLY for a TensorFlow course. This script focuses 100% on the AI deployment lifecycle, embedding real mathematical tables and system architecture diagrams directly into the slides. 
 > **Language**: English (Expert AI Deployment Engineer Tone).
 
 ---
 
 ## Slide 1: The Edge Deployment Challenge
-**Visual**: A diagram showing a massive Cloud GPU cluster pointing down to a tiny, solar-powered Edge IoT device in a barn.
+**Visual**: 
+```mermaid
+graph TD
+    subgraph Cloud Training
+        A[NVIDIA A100 GPU Cluster] -->|Infinite Power| B(FP32 TensorFlow Model)
+    end
+    subgraph Edge Reality
+        C{Physical Constraints} -->|15W TDP Limit| D[Thermal Shutdown]
+        C -->|Memory Bandwidth| E[2 FPS CPU Bottleneck]
+    end
+    B -.->|Naive Deployment Fails| C
+```
 **Speaker Script**:
 > "Good morning. Today our team presents the final, and often most difficult phase of the machine learning lifecycle: Edge Deployment.
 > 
@@ -17,7 +28,14 @@
 ---
 
 ## Slide 2: The AI Deployment Progression Pipeline
-**Visual**: A 4-step deployment flowchart: 1. `TF SavedModel` → 2. `TFLite Converter (PTQ)` → 3. `C++ Hardware Delegates` → 4. `Zero-Copy Inference`.
+**Visual**: 
+```mermaid
+graph LR
+    A[TF SavedModel] -->|1. Export| B[TFLite Converter]
+    B -->|2. PTQ INT8| C[Compressed .tflite]
+    C -->|3. TFLite Delegates| D[Hardware Accelerator]
+    D -->|4. Zero-Copy C++| E[Native Edge Inference]
+```
 **Speaker Script**:
 > "To successfully deploy AI to physical hardware, we follow a strict 4-step progression pipeline. 
 > 
@@ -29,18 +47,30 @@
 ---
 
 ## Slide 3: TFLite & INT8 Quantization
-**Visual**: A code snippet of `tf.lite.TFLiteConverter` with `optimizations = [tf.lite.Optimize.DEFAULT]` alongside a table comparing FP32 vs INT8 size.
+**Visual**: 
+| Model Format | Precision | Model Size | Accuracy Drop (QWK) | Memory Bandwidth Req |
+|--------------|-----------|------------|---------------------|----------------------|
+| TF SavedModel | FP32 | 85.8 MB | Baseline | Extremely High |
+| TFLite Model | INT8 | **21.5 MB** | **-0.002** (Negligible) | **Low (Divided by 4)** |
+
 **Speaker Script**:
 > "The first major hurdle is model size. The DINOv2 Vision Transformer is massive. We cannot deploy it in FP32.
 > 
 > We use the `TFLiteConverter` to apply Post-Training Quantization (PTQ). By providing a representative calibration dataset of our cow images, TensorFlow analyzes the activation distributions and safely maps the neural network's weights from 32-bit floating point down to 8-bit integers (INT8). 
 > 
-> The result? The model footprint shrinks by 4x, and the required memory bandwidth drops by 4x, while the accuracy drop on our evaluation set is statistically negligible. But having a small model is only half the battle; we still need to compute it efficiently."
+> The result? As you can see in the table, the model footprint shrinks by 4x, and the required memory bandwidth drops by 4x, while the accuracy drop on our evaluation set is statistically negligible. But having a small model is only half the battle; we still need to compute it efficiently."
 
 ---
 
 ## Slide 4: Hardware Acceleration via TFLite Delegates
-**Visual**: Architecture diagram of TFLite Delegates routing tasks: CPU (XNNPACK), GPU (OpenCL), and DSP (Hexagon Delegate).
+**Visual**: 
+```mermaid
+graph TD
+    TF[TFLite Interpreter] --> CPU[XNNPACK CPU Delegate]
+    TF --> GPU[OpenCL GPU Delegate]
+    TF --> DSP[Hexagon DSP Delegate]
+    DSP -->|Qualcomm ASIC| ASIC[Matrix Multiplication at 2.8W]
+```
 **Speaker Script**:
 > "Running an INT8 model on a low-power ARM CPU still yields terrible frame rates. This is where the brilliance of the TensorFlow Lite ecosystem shines: **Delegates**.
 > 
@@ -51,7 +81,14 @@
 ---
 
 ## Slide 5: The Physical Deployment & Zero-Copy Paradigm (C++)
-**Visual**: A memory flow diagram showing Camera → Hardware Decoder → `DMA-BUF` → TFLite Tensor (bypassing the CPU entirely).
+**Visual**: 
+```mermaid
+graph LR
+    CAM[Camera HW] -->|dma_buf FD| DEC[HW Decoder]
+    DEC -->|ION Pointer| TFL[TFLite Input Tensor]
+    TFL -->|Hexagon DSP| OUT[BCS Result]
+    CPU[ARM CPU] -.->|Bypassed completely| CAM
+```
 **Speaker Script**:
 > "The final bottleneck in AI deployment is memory bandwidth. If we use Python, every video frame is copied from the CPU RAM to the GPU RAM, processed, and copied back. This continuous data copying destroys throughput.
 > 
@@ -62,18 +99,32 @@
 ---
 
 ## Slide 6: Throughput vs Efficiency (Restricted TDP)
-**Visual**: Bar charts comparing Throughput (31 FPS vs 22 FPS) and Power (15W vs 2.8W).
+**Visual**: 
+```mermaid
+xychart-beta
+    title "Edge Inference: Throughput vs Power Efficiency"
+    x-axis ["Jetson (15W Throttled FPS)", "Jetson (15W Power)", "Qualcomm (DSP FPS)", "Qualcomm (DSP Power)"]
+    y-axis "Value" 0.0 --> 35.0
+    bar [31.0, 15.0, 22.0, 2.8]
+```
 **Speaker Script**:
 > "By strictly following this deployment progression, we unlocked the true power of the silicon. But we must face physical deployment constraints. 
 > 
-> If we let an NVIDIA Jetson Orin NX run unbounded in MAXN mode, it can hit 80+ FPS. But in a dusty, hot barn, we must restrict it to a **15 Watt Power Profile** to prevent thermal shutdown. At a strict 15W limit, the Jetson's GPU is throttled, capping the pipeline at **31 FPS**. 
+> If we let an NVIDIA Jetson run unbounded, it overheats. We must restrict it to a **15 Watt Power Profile**, which caps the pipeline at **31 FPS**. 
 > 
-> Remarkably, Qualcomm's Hexagon DSP handles the exact same pipeline at **22 FPS**, maintaining real-time processing capabilities while drawing only **2.8 Watts**. Qualcomm is the undisputed champion of solar-powered Edge AI."
+> Remarkably, Qualcomm's Hexagon DSP handles the exact same pipeline at **22 FPS**, maintaining real-time processing capabilities while drawing only **2.8 Watts**. Because it relies on the TensorFlow Lite Hexagon Delegate instead of a general-purpose GPU, Qualcomm is the undisputed champion of solar-powered Edge AI."
 
 ---
 
 ## Slide 7: Edge Resilience & MLOps Fleet Orchestration
-**Visual**: Kubernetes (K3s) logo, GitHub Actions, and a diagram showing an offline/online C++ Thermal Watchdog.
+**Visual**: 
+```mermaid
+graph TD
+    K3S[K3s Kubernetes] -->|OTA TF Weights| EDGE[Physical Barn Node]
+    EDGE -->|C++ Thermal Watchdog| TFL[TFLite Engine]
+    TFL -->|> 75°C| THROTTLE[Drop FPS to Cool]
+    EDGE -->|Offline Cache| PROM[Prometheus / Grafana]
+```
 **Speaker Script**:
 > "Finally, we wrapped this architecture in Enterprise-grade MLOps Infrastructure. 
 > 
