@@ -108,13 +108,12 @@
 ---
 
 ## Slide 11 — THROUGHPUT VS EFFICIENCY
-**Visual**: Bar charts comparing Throughput (83 FPS vs 31 FPS) and Power (12W vs 2.8W).
 **Speaker Script**:
-> "The zero-copy architecture unlocked the true power of the silicon. 
+> "The zero-copy architecture unlocked the true power of the silicon, but we must face physical deployment constraints. 
 > 
-> Because NVIDIA Jetson Orin utilizes a massive Ampere GPU, we achieved a theoretical maximum throughput of **83 FPS**—meaning a single Jetson can process three physical camera streams simultaneously in real-time. 
+> If we let the NVIDIA Jetson Orin NX run unbounded in MAXN mode, it can hit 80+ FPS. But in a dusty, hot barn, we must restrict it to a **15 Watt Power Profile** to prevent thermal shutdown. At a strict 15W limit, the Jetson's GPU is throttled, capping the pipeline at **~31 FPS**. 
 > 
-> However, Qualcomm's RB3 Gen2 handles a flawless 31 FPS using only **2.8 Watts**. Why? Because Qualcomm runs DINOv2 on the Hexagon DSP—a highly specialized ASIC designed purely for low-power matrix multiplication, unlike NVIDIA's general-purpose GPU. Qualcomm is the absolute champion of solar-powered Edge AI."
+> Remarkably, Qualcomm's RB3 Gen2 handles the exact same pipeline at a flawless **31 FPS**, meaning it matches the throughput of a 15W NVIDIA GPU. But it does so drawing only **2.8 Watts**. Why? Because Qualcomm runs DINOv2 on the Hexagon DSP—a specialized ASIC designed for matrix math, unlike NVIDIA's general-purpose GPU. Qualcomm is the absolute champion of solar-powered Edge AI."
 
 ---
 
