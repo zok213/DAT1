@@ -79,13 +79,22 @@ plt.tight_layout()
 plt.savefig('assets/power_consumption.png', dpi=300)
 plt.close()
 
-# 4. Impact of TTA (QWK)
-fig, ax = plt.subplots(figsize=(6, 6))
-labels = ['Baseline', '+ Train-Time\nAugmentation']
-values = [0.774, 0.849]
-bars = ax.bar(labels, values, color=['#7f7f7f', '#9467bd'], alpha=0.8, width=0.5)
+# 4. Impact of TTA vs Failed Ablations (QWK)
+fig, ax = plt.subplots(figsize=(10, 6))
+labels = [
+    'Cross-View\nAttention\n(Overfit)',
+    'ViT-Large\nBackbone\n(Overfit)',
+    'CORAL\nOrdinal Head',
+    'Baseline\n(DINOv2-S)', 
+    'Baseline +\nTrain-Time Aug.\n(TTA)'
+]
+values = [0.745, 0.760, 0.765, 0.774, 0.849]
+# Red for failed, Grey for base, Green for success
+colors = ['#d62728', '#d62728', '#d62728', '#7f7f7f', '#2ca02c'] 
+
+bars = ax.bar(labels, values, color=colors, alpha=0.8, width=0.6)
 ax.set_ylabel('Quadratic Weighted Kappa (QWK)')
-ax.set_title('Impact of TTA on Accuracy')
+ax.set_title('Architecture Ablations vs Train-Time Augmentation (TTA)')
 ax.set_ylim(0.7, 0.9)
 add_labels(ax, bars, fmt='%.3f')
 plt.tight_layout()

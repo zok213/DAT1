@@ -46,7 +46,25 @@ graph LR
 
 ---
 
-## Slide 3: TFLite & INT8 Quantization
+## Slide 3: Model Architecture & Data Ablations
+**Visual**: 
+```mermaid
+xychart-beta
+    title "Architecture Ablations vs Train-Time Augmentation (TTA)"
+    x-axis ["Cross-View (Overfit)", "ViT-Large (Overfit)", "CORAL Head", "Baseline (DINOv2-S)", "Baseline + TTA"]
+    y-axis "Quadratic Weighted Kappa" 0.700 --> 0.900
+    bar [0.745, 0.760, 0.765, 0.774, 0.849]
+```
+**Speaker Script**:
+> "Before we even touched the deployment hardware, we had to finalize the neural network architecture. 
+> 
+> Our baseline DINOv2-Small model achieved a QWK of 0.774. We initially tried to improve this by throwing more architectural complexity at the problem: scaling up to a ViT-Large backbone, implementing Cross-View Attention, and testing a CORAL Ordinal Head. As you can see, these all failed and overfit to the noise in the barn environments. 
+> 
+> The true breakthrough was not architectural complexity, but data complexity. By implementing aggressive Train-Time Augmentation (TTA), we dramatically boosted the QWK to 0.849 using the lightweight DINOv2-Small baseline. This small, highly accurate model became the perfect candidate for edge quantization."
+
+---
+
+## Slide 4: TFLite & INT8 Quantization
 **Visual**: 
 | Model Format | Precision | Model Size | Accuracy Drop (QWK) | Memory Bandwidth Req |
 |--------------|-----------|------------|---------------------|----------------------|
@@ -62,7 +80,7 @@ graph LR
 
 ---
 
-## Slide 4: Hardware Acceleration via TFLite Delegates
+## Slide 5: Hardware Acceleration via TFLite Delegates
 **Visual**: 
 ```mermaid
 graph TD
@@ -80,7 +98,7 @@ graph TD
 
 ---
 
-## Slide 5: The Physical Deployment & Zero-Copy Paradigm (C++)
+## Slide 6: The Physical Deployment & Zero-Copy Paradigm (C++)
 **Visual**: 
 ```mermaid
 graph LR
@@ -98,7 +116,7 @@ graph LR
 
 ---
 
-## Slide 6: Hardware Latency Profiling (Native Log Metrics)
+## Slide 7: Hardware Latency Profiling (Native Log Metrics)
 **Visual**: 
 | Metric (Per Frame) | NVIDIA Jetson Orin NX (15W) | Qualcomm RB3 Gen2 | Radxa CM5 (RK3588) |
 |--------------------|-----------------------------|-------------------|--------------------|
@@ -121,7 +139,7 @@ graph LR
 
 ---
 
-## Slide 7: The Cost of Unoptimized FP32 vs Edge Quantization
+## Slide 8: The Cost of Unoptimized FP32 vs Edge Quantization
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -141,7 +159,7 @@ xychart-beta
 
 ---
 
-## Slide 8: YOLOv8 Object Detection Profiling
+## Slide 9: YOLOv8 Object Detection Profiling
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -159,7 +177,7 @@ xychart-beta
 
 ---
 
-## Slide 9: Throughput vs Power Efficiency
+## Slide 10: Throughput vs Power Efficiency
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -186,7 +204,7 @@ xychart-beta
 
 ---
 
-## Slide 10: Edge Resilience & MLOps Fleet Orchestration
+## Slide 11: Edge Resilience & MLOps Fleet Orchestration
 **Visual**: 
 ```mermaid
 graph TD
@@ -202,7 +220,7 @@ graph TD
 
 ---
 
-## Slide 11: Conclusion
+## Slide 12: Conclusion
 **Speaker Script**:
 > "To conclude: 
 > 
