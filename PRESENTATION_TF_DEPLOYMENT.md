@@ -180,10 +180,10 @@ xychart-beta
 **Visual**: 
 ```mermaid
 xychart-beta
-    title "Pipeline Throughput (Target: 30 FPS)"
+    title "Pipeline Throughput (Target: 24 FPS)"
     x-axis ["NVIDIA Jetson (15W)", "Qualcomm RB3 (Native)", "Radxa CM5 (Native)"]
     y-axis "Frames per Second" 0.0 --> 40.0
-    bar [31.0, 22.0, 25.0]
+    bar [31.2, 22.4, 25.3]
 ```
 ```mermaid
 xychart-beta
@@ -195,9 +195,9 @@ xychart-beta
 **Speaker Script**:
 > "When we put the entire C++ pipeline together, we get these final system metrics. 
 > 
-> The top chart shows our pipeline throughput. The NVIDIA Jetson hits 31 FPS, Radxa hits 25, and Qualcomm hits 22 FPS. All of them are highly capable for real-world video processing. 
+> The top chart shows our pipeline throughput against the 24 FPS real-time cinematic target. The NVIDIA Jetson hits 31.2 FPS, Radxa hits 25.3, and Qualcomm hits 22.4 FPS. All of them are highly capable for real-world video processing. 
 > 
-> But the bottom chart reveals the true engineering victory. To achieve that throughput, Jetson must draw 15 Watts. The Radxa draws 6 Watts. Remarkably, Qualcomm maintains its 22 FPS real-time processing capabilities while drawing a staggering **2.8 Watts**. Because it relies on the Hexagon DSP instead of a general-purpose GPU, Qualcomm is the absolute champion of solar-powered Edge AI."
+> But the bottom chart reveals the true engineering victory. To achieve that throughput, Jetson must draw 15 Watts. The Radxa draws 6 Watts. Remarkably, Qualcomm maintains its 22.4 FPS real-time processing capabilities while drawing a staggering **2.8 Watts**. Because it relies on the Hexagon DSP instead of a general-purpose GPU, Qualcomm is the absolute champion of solar-powered Edge AI."
 
 ---
 

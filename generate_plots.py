@@ -36,12 +36,12 @@ plt.close()
 # 2. Throughput (FPS)
 fig, ax = plt.subplots(figsize=(8, 6))
 labels = ['Jetson\n(15W Throttled)', 'Qualcomm\n(Native)', 'Radxa\n(Native)']
-values = [31.0, 22.0, 25.0]
+values = [31.2, 22.4, 25.3]
 colors = ['#2ca02c', '#1f77b4', '#d62728']
 bars = ax.bar(labels, values, color=colors, alpha=0.8)
 ax.set_ylabel('Frames per Second (Higher is Better)')
 ax.set_title('Pipeline Throughput (FPS)')
-ax.axhline(y=30, color='r', linestyle='--', alpha=0.5, label='Real-time Target (30 FPS)')
+ax.axhline(y=24, color='r', linestyle='--', alpha=0.5, label='Real-time Target (24 FPS)')
 ax.legend()
 add_labels(ax, bars)
 plt.tight_layout()
