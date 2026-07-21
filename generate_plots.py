@@ -74,6 +74,41 @@ plt.tight_layout()
 plt.savefig('assets/tta_qwk.png', dpi=300)
 plt.close()
 
+# 4b. FP32 vs INT8/FP16 Latency (Grouped Bar)
+fig, ax = plt.subplots(figsize=(10, 6))
+labels = ['NVIDIA Jetson', 'Qualcomm RB3', 'Radxa CM5']
+fp32_latencies = [37.0, 280.0, 450.0]  # FP32 GPU, FP32 CPU, FP32 CPU
+opt_latencies = [18.5, 23.0, 38.0]     # FP16 TensorRT, INT8 DSP, INT8 NPU
+
+x = np.arange(len(labels))
+width = 0.35
+
+rects1 = ax.bar(x - width/2, fp32_latencies, width, label='FP32 (Unoptimized CPU/GPU)', color='#ff7f0e', alpha=0.8)
+rects2 = ax.bar(x + width/2, opt_latencies, width, label='FP16/INT8 (TensorRT/DSP/NPU)', color='#2ca02c', alpha=0.8)
+
+ax.set_ylabel('DINOv2 Latency (ms) - Log Scale')
+ax.set_title('The Cost of Unoptimized FP32 vs Edge Quantization')
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.set_yscale('log') # Use log scale because 450ms is huge compared to 18.5ms
+ax.legend()
+
+def add_labels_log(ax, rects):
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate('%.1f' % height,
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha='center', va='bottom', fontweight='bold')
+
+add_labels_log(ax, rects1)
+add_labels_log(ax, rects2)
+
+plt.tight_layout()
+plt.savefig('assets/fp32_vs_optimized.png', dpi=300)
+plt.close()
+
 # 5. Latency Breakdown (Stacked Bar)
 fig, ax = plt.subplots(figsize=(10, 7))
 labels = ['NVIDIA Jetson\n(15W)', 'Qualcomm RB3\nGen2', 'Radxa CM5\n(RK3588)']

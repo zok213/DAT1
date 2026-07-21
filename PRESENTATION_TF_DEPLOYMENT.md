@@ -140,7 +140,25 @@ graph LR
 
 ---
 
-## Slide 7: Cross-Framework Quantization Benchmarks
+## Slide 7: The Cost of Unoptimized FP32 vs Edge Quantization
+**Visual**: 
+```mermaid
+xychart-beta
+    title "DINOv2 Latency (Log Scale) - FP32 vs Optimized"
+    x-axis ["Jetson (FP32)", "Jetson (FP16)", "Qualcomm (CPU FP32)", "Qualcomm (INT8 DSP)", "Radxa (CPU FP32)", "Radxa (INT8 NPU)"]
+    y-axis "Latency (ms)" 0.0 --> 500.0
+    bar [37.0, 18.5, 280.0, 23.0, 450.0, 38.0]
+```
+**Speaker Script**:
+> "To understand why we went through this rigorous quantization process, look at the cost of deploying standard FP32 models. 
+> 
+> If we run DINOv2 natively in FP32 on the Radxa or Qualcomm CPUs, it takes 450ms and 280ms respectively per frame. It is fundamentally impossible to run real-time AI in FP32 on a low-power ARM CPU. Even on the Jetson Orin NX, running FP32 natively on the GPU takes 37ms per frame and draws massive power.
+> 
+> By utilizing Post-Training Quantization (PTQ) down to INT8 and leveraging Hardware NPUs and DSPs, we slashed latency by over 10x on the edge SoC boards. Let's look closer at the specific quantization formats."
+
+---
+
+## Slide 8: Cross-Framework Quantization Benchmarks
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -158,7 +176,7 @@ xychart-beta
 
 ---
 
-## Slide 8: Throughput vs Power Efficiency
+## Slide 9: Throughput vs Power Efficiency
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -183,7 +201,7 @@ xychart-beta
 
 ---
 
-## Slide 9: Edge Resilience & MLOps Fleet Orchestration
+## Slide 10: Edge Resilience & MLOps Fleet Orchestration
 **Visual**: 
 ```mermaid
 graph TD
@@ -199,7 +217,7 @@ graph TD
 
 ---
 
-## Slide 10: Conclusion
+## Slide 11: Conclusion
 **Speaker Script**:
 > "To conclude: 
 > 
