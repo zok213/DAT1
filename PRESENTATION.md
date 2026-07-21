@@ -117,23 +117,34 @@
 
 ---
 
-## Slide 12 — MLOPS FLEET ORCHESTRATION
-**Visual**: Kubernetes (K3s) logo, GitHub Actions, and Grafana Dashboard.
+## Slide 12 — MLOPS FLEET ORCHESTRATION & RESILIENCE
+**Visual**: Kubernetes (K3s) logo, GitHub Actions, and a diagram showing an offline/online state machine.
 **Speaker Script**:
 > "Finally, we wrapped this architecture in Enterprise-grade MLOps Infrastructure to scale it to thousands of farms. 
 > 
-> We utilize K3s Kubernetes to safely orchestrate the hardware accelerators. Every code commit is validated through GitHub Actions CI/CD. And our C++ watchdogs actively export physical silicon temperatures to a global Grafana dashboard via Prometheus. We don't just run AI on a farm; we manage it globally."
+> We utilize K3s Kubernetes to safely orchestrate the hardware accelerators and push Over-The-Air (OTA) model updates. But a real AI engineer knows that barns lose internet. Therefore, our architecture is fully air-gapped capable. The C++ watchdogs we built actively monitor physical silicon temperatures. If the board hits 75°C, the watchdog gracefully drops the camera FPS to prevent a kernel panic. Telemetry is cached locally, and when the Starlink or 4G connection returns, it syncs the health of the global fleet back to our Grafana dashboards via Prometheus."
 
 ---
 
-## Slide 12 — CONCLUSION
+## Slide 13 — THE ACTIVE LEARNING DATA ENGINE
+**Visual**: A closed-loop diagram: Edge Inference → Low Confidence Trigger → Cloud Upload → Human Labeling → OTA Model Update.
+**Speaker Script**:
+> "But infrastructure alone isn't enough; we need a data engine to solve the CCTV deployment gap we quantified earlier. 
+> 
+> Streaming 24/7 HD video from a farm to the cloud is impossible due to bandwidth constraints. Instead, our edge models calculate the entropy—the uncertainty—of every BCS prediction. If the model is confident, it just logs the score. But if the model is highly uncertain, the C++ pipeline captures that specific frame and triggers a lightweight upload to the cloud. 
+> 
+> We only upload the hardest edge cases. Humans label them, the model retrains, and K3s pushes the new weights back to the edge. This is a true, closed-loop Active Learning flywheel."
+
+---
+
+## Slide 14 — CONCLUSION
 **Speaker Script**:
 > "To conclude: 
 > 
 > 1. We understood the data quantitatively, which dictated our modular model selection. 
 > 2. We ruthlessly benchmarked every component with significance tests, proving that train-time augmentation—not complex architecture—drove the only significant gains. 
-> 3. We validated on real expert labels, matching the human inter-rater ceiling. 
-> 4. We quantified the CCTV gap, and deployed the final architecture onto Zero-Copy Edge Hardware with full MLOps orchestration.
+> 3. We matched the human inter-rater ceiling on expert validation data. 
+> 4. We deployed the final architecture onto Zero-Copy Edge Hardware, restricted it to physical 15W thermal constraints, and backed it with a resilient, Active-Learning MLOps fleet engine.
 > 
 > We have successfully commoditized the edge. Thank you, and I am happy to take any questions."
 
