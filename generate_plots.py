@@ -74,24 +74,26 @@ plt.tight_layout()
 plt.savefig('assets/tta_qwk.png', dpi=300)
 plt.close()
 
-# 4b. FP32 vs INT8/FP16 Latency (Grouped Bar)
-fig, ax = plt.subplots(figsize=(10, 6))
-labels = ['NVIDIA Jetson', 'Qualcomm RB3', 'Radxa CM5']
-fp32_latencies = [37.0, 280.0, 450.0]  # FP32 GPU, FP32 CPU, FP32 CPU
-opt_latencies = [18.5, 23.0, 38.0]     # FP16 TensorRT, INT8 DSP, INT8 NPU
+# 4b. Comprehensive Framework & Quantization Latency (Bar Chart)
+fig, ax = plt.subplots(figsize=(12, 7))
+labels = [
+    'Radxa CPU\n(Native FP32)', 
+    'Qualcomm CPU\n(Native FP32)', 
+    'Qualcomm DSP\n(TFLite QNN W8A16)',
+    'Radxa NPU\n(RKNN INT8 W8A8)',
+    'Jetson GPU\n(Native FP32)',
+    'Qualcomm DSP\n(TFLite QNN W8A8)',
+    'Jetson GPU\n(TensorRT FP16)'
+]
+latencies = [450.0, 280.0, 41.5, 38.0, 37.0, 23.0, 18.5]
+# Color code by hardware vendor: Radxa=Red, Qualcomm=Blue, NVIDIA=Green
+colors = ['#d62728', '#1f77b4', '#1f77b4', '#d62728', '#2ca02c', '#1f77b4', '#2ca02c']
 
-x = np.arange(len(labels))
-width = 0.35
-
-rects1 = ax.bar(x - width/2, fp32_latencies, width, label='FP32 (Unoptimized CPU/GPU)', color='#ff7f0e', alpha=0.8)
-rects2 = ax.bar(x + width/2, opt_latencies, width, label='FP16/INT8 (TensorRT/DSP/NPU)', color='#2ca02c', alpha=0.8)
+bars = ax.bar(labels, latencies, color=colors, alpha=0.8)
 
 ax.set_ylabel('DINOv2 Latency (ms) - Log Scale')
-ax.set_title('The Cost of Unoptimized FP32 vs Edge Quantization')
-ax.set_xticks(x)
-ax.set_xticklabels(labels)
-ax.set_yscale('log') # Use log scale because 450ms is huge compared to 18.5ms
-ax.legend()
+ax.set_title('The Cost of FP32 vs Edge Quantization (TensorRT, TFLite QNN, RKNN)')
+ax.set_yscale('log')
 
 def add_labels_log(ax, rects):
     for rect in rects:
@@ -102,9 +104,8 @@ def add_labels_log(ax, rects):
                     textcoords="offset points",
                     ha='center', va='bottom', fontweight='bold')
 
-add_labels_log(ax, rects1)
-add_labels_log(ax, rects2)
-
+add_labels_log(ax, bars)
+plt.xticks(rotation=25, ha='right')
 plt.tight_layout()
 plt.savefig('assets/fp32_vs_optimized.png', dpi=300)
 plt.close()
