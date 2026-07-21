@@ -33,30 +33,48 @@ plt.tight_layout()
 plt.savefig('assets/quantization_latency.png', dpi=300)
 plt.close()
 
-# 2. Throughput (FPS)
-fig, ax = plt.subplots(figsize=(8, 6))
-labels = ['Jetson\n(15W Throttled)', 'Qualcomm\n(Native)', 'Radxa\n(Native)']
-values = [31.2, 22.4, 25.3]
-colors = ['#2ca02c', '#1f77b4', '#d62728']
+# 2. Comprehensive Throughput (FPS)
+fig, ax = plt.subplots(figsize=(12, 7))
+labels = [
+    'Radxa CPU\n(Native FP32)', 
+    'Qualcomm CPU\n(Native FP32)', 
+    'Jetson GPU\n(FP32 MAXN)',
+    'Qualcomm DSP\n(Hexagon INT8)',
+    'Radxa NPU\n(RKNN INT8)',
+    'Jetson GPU\n(TensorRT FP16 15W)'
+]
+values = [1.8, 2.8, 14.2, 22.4, 25.3, 31.2]
+colors = ['#d62728', '#1f77b4', '#2ca02c', '#1f77b4', '#d62728', '#2ca02c']
+
 bars = ax.bar(labels, values, color=colors, alpha=0.8)
 ax.set_ylabel('Frames per Second (Higher is Better)')
-ax.set_title('Pipeline Throughput (FPS)')
+ax.set_title('Pipeline Throughput: FP32 vs Optimized Edge')
 ax.axhline(y=24, color='r', linestyle='--', alpha=0.5, label='Real-time Target (24 FPS)')
 ax.legend()
 add_labels(ax, bars)
+plt.xticks(rotation=25, ha='right')
 plt.tight_layout()
 plt.savefig('assets/throughput_fps.png', dpi=300)
 plt.close()
 
-# 3. Power Consumption (Watts)
-fig, ax = plt.subplots(figsize=(8, 6))
-labels = ['Jetson\n(15W Mode)', 'Qualcomm\nRB3 Gen2', 'Radxa\nCM5']
-values = [15.0, 2.8, 6.0]
-colors = ['#2ca02c', '#1f77b4', '#d62728']
+# 3. Comprehensive Power Consumption (Watts)
+fig, ax = plt.subplots(figsize=(12, 7))
+labels = [
+    'Jetson GPU\n(FP32 MAXN)',
+    'Jetson GPU\n(TensorRT 15W)',
+    'Qualcomm CPU\n(Native FP32)', 
+    'Radxa CPU\n(Native FP32)', 
+    'Radxa NPU\n(RKNN INT8)',
+    'Qualcomm DSP\n(Hexagon INT8)'
+]
+values = [25.0, 15.0, 12.0, 12.0, 6.0, 2.8]
+colors = ['#2ca02c', '#2ca02c', '#1f77b4', '#d62728', '#d62728', '#1f77b4']
+
 bars = ax.bar(labels, values, color=colors, alpha=0.8)
 ax.set_ylabel('Estimated Watts (Lower is Better)')
-ax.set_title('System Power Consumption')
+ax.set_title('System Power Consumption: FP32 vs Optimized Edge')
 add_labels(ax, bars)
+plt.xticks(rotation=25, ha='right')
 plt.tight_layout()
 plt.savefig('assets/power_consumption.png', dpi=300)
 plt.close()

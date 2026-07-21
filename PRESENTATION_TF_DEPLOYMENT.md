@@ -164,23 +164,25 @@ xychart-beta
 ```mermaid
 xychart-beta
     title "Pipeline Throughput (Target: 24 FPS)"
-    x-axis ["NVIDIA Jetson (15W)", "Qualcomm RB3 (Native)", "Radxa CM5 (Native)"]
+    x-axis ["Radxa (CPU FP32)", "Qualcomm (CPU FP32)", "Jetson (GPU FP32 MAXN)", "Qualcomm (Hexagon INT8)", "Radxa (RKNN INT8)", "Jetson (RT FP16 15W)"]
     y-axis "Frames per Second" 0.0 --> 40.0
-    bar [31.2, 22.4, 25.3]
+    bar [1.8, 2.8, 14.2, 22.4, 25.3, 31.2]
 ```
 ```mermaid
 xychart-beta
     title "System Power Consumption (Lower is Better)"
-    x-axis ["NVIDIA Jetson (Throttled)", "Qualcomm RB3 Gen2", "Radxa CM5"]
-    y-axis "Estimated Watts" 0.0 --> 20.0
-    bar [15.0, 2.8, 6.0]
+    x-axis ["Jetson (GPU FP32 MAXN)", "Jetson (RT FP16 15W)", "Qualcomm (CPU FP32)", "Radxa (CPU FP32)", "Radxa (RKNN INT8)", "Qualcomm (Hexagon INT8)"]
+    y-axis "Estimated Watts" 0.0 --> 30.0
+    bar [25.0, 15.0, 12.0, 12.0, 6.0, 2.8]
 ```
 **Speaker Script**:
 > "When we put the entire C++ pipeline together, we get these final system metrics. 
 > 
-> The top chart shows our pipeline throughput against the 24 FPS real-time cinematic target. The NVIDIA Jetson hits 31.2 FPS, Radxa hits 25.3, and Qualcomm hits 22.4 FPS. All of them are highly capable for real-world video processing. 
+> Look at what happens to our pipeline throughput if we try to deploy unoptimized FP32 models. The CPU architectures completely choke, delivering under 3 FPS. Even an unrestricted Jetson Orin NX drawing 25 Watts of power can only hit 14.2 FPS natively in FP32. 
 > 
-> But the bottom chart reveals the true engineering victory. To achieve that throughput, Jetson must draw 15 Watts. The Radxa draws 6 Watts. Remarkably, Qualcomm maintains its 22.4 FPS real-time processing capabilities while drawing a staggering **2.8 Watts**. Because it relies on the Hexagon DSP instead of a general-purpose GPU, Qualcomm is the absolute champion of solar-powered Edge AI."
+> But with our TFLite, TensorRT, and RKNN optimizations, we easily clear the 24 FPS real-time cinematic target. 
+> 
+> And the bottom chart reveals the true engineering victory. To achieve that throughput, Jetson must draw 15 Watts. The Radxa draws 6 Watts. Remarkably, Qualcomm maintains its 22.4 FPS real-time processing capabilities while drawing a staggering **2.8 Watts**. Because it relies on the Hexagon DSP instead of a general-purpose GPU, Qualcomm is the absolute champion of solar-powered Edge AI."
 
 ---
 
