@@ -98,21 +98,33 @@ graph TD
 
 ---
 
-## Slide 6: The Physical Deployment & Zero-Copy Paradigm (C++)
+## Slide 6: The Zero-Copy Memory Paradigms
 **Visual**: 
 ```mermaid
-graph LR
-    CAM[Camera HW] -->|dma_buf FD| DEC[HW Decoder]
-    DEC -->|ION Pointer| TFL[TFLite Input Tensor]
-    TFL -->|Hexagon DSP| OUT[BCS Result]
-    CPU[ARM CPU] -.->|Bypassed completely| CAM
+flowchart TD
+    subgraph NVIDIA ["NVIDIA Jetson Orin"]
+        direction LR
+        NV[NVDEC Decoder] -- NVMM Buffer --> TRT[TensorRT Engine]
+    end
+
+    subgraph Qualcomm ["Qualcomm RB3 Gen2"]
+        direction LR
+        ADRENO[Adreno GPU] -- DMA-BUF / ION FD --> HEX[Hexagon DSP]
+    end
+
+    subgraph Radxa ["Radxa CM5 RK3588"]
+        direction LR
+        MPP[MPP Decoder] -- dma_buf --> RGA[RGA Resizer] -- dma_buf --> RKNN[RKNN NPU]
+    end
 ```
 **Speaker Script**:
-> "The final bottleneck in AI deployment is memory bandwidth. If we use Python, every video frame is copied from the CPU RAM to the GPU RAM, processed, and copied back. This continuous data copying destroys throughput.
+> "The single most critical optimization in Edge AI is Zero-Copy Memory. Moving HD video frames between the CPU, GPU, and NPU destroys throughput. Each of our branches implements the specific zero-copy paradigm required by its hardware:
 > 
-> To solve this, we moved entirely to the **TFLite C++ API** and implemented a **Zero-Copy** architecture using Linux `DMA-BUF`. 
+> - **The NVIDIA Architecture (jetsonorin)**: NVIDIA relies on NVMM (NVIDIA Memory Management). Video is decoded via NVDEC, batched via nvstreammux, and processed via TensorRT—all while residing entirely in the Unified GPU Memory. The CPU utilization drops to ~5%.
 > 
-> When the camera captures a frame, the hardware decoder places it in memory and gives us a file descriptor pointer. We pass this exact pointer directly into the TFLite Hexagon Delegate. The image data never touches the CPU. It flows directly from the camera hardware into the AI accelerator."
+> - **The Qualcomm Architecture (qualcomm)**: Qualcomm relies on DMA-BUF (ION Memory FDs). Because the Adreno GPU and Hexagon DSP are highly isolated, we allocate ION file descriptors and pass them through V4L2 to the TFLite Delegate. The CPU never touches the pixel data, keeping load at ~8%.
+> 
+> - **The Rockchip Architecture (radxacm5)**: Rockchip relies on `dma_buf` coupled with MPP and RGA. Video is decoded in the MPP block, cropped and resized instantly in the RGA hardware graphics block, and fed into the 6 TOPS RKNN NPU. CPU load stays around ~12%."
 
 ---
 
