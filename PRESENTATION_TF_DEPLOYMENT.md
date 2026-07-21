@@ -145,10 +145,10 @@ xychart-beta
 **Visual**: 
 ```mermaid
 xychart-beta
-    title "YOLOv8 INT8 Latency (Lower is Better)"
-    x-axis ["Jetson (TensorRT INT8)", "Qualcomm (Hexagon INT8)", "Radxa (RKNN INT8)"]
-    y-axis "Latency (ms)" 0.0 --> 20.0
-    bar [11.0, 8.6, 12.5]
+    title "YOLOv8 Latency (Log Scale) - FP32 vs Edge Quantization"
+    x-axis ["Radxa (CPU FP32)", "Qualcomm (CPU FP32)", "Jetson (GPU FP32)", "Radxa (RKNN INT8)", "Jetson (RT INT8)", "Qualcomm (QNN INT8)"]
+    y-axis "Latency (ms)" 0.0 --> 150.0
+    bar [120.0, 85.0, 18.0, 12.5, 11.0, 8.6]
 ```
 **Speaker Script**:
 > "While DINOv2 is the heaviest part of our pipeline, we cannot ignore the YOLOv8 object detector. 

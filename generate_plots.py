@@ -143,17 +143,28 @@ plt.tight_layout()
 plt.savefig('assets/latency_breakdown.png', dpi=300)
 plt.close()
 
-# 6. YOLOv8 Object Detection Latency
-fig, ax = plt.subplots(figsize=(8, 6))
-labels = ['Jetson GPU\n(TensorRT INT8)', 'Qualcomm DSP\n(Hexagon INT8)', 'Radxa NPU\n(RKNN INT8)']
-latencies = [11.0, 8.6, 12.5]
-colors = ['#2ca02c', '#1f77b4', '#d62728']
+# 6. Comprehensive YOLOv8 Object Detection Latency
+fig, ax = plt.subplots(figsize=(12, 7))
+labels = [
+    'Radxa CPU\n(Native FP32)', 
+    'Qualcomm CPU\n(Native FP32)', 
+    'Jetson GPU\n(Native FP32)',
+    'Radxa NPU\n(RKNN INT8 W8A8)',
+    'Jetson GPU\n(TensorRT INT8)',
+    'Qualcomm DSP\n(TFLite QNN W8A8)'
+]
+latencies = [120.0, 85.0, 18.0, 12.5, 11.0, 8.6]
+# Color code by hardware vendor: Radxa=Red, Qualcomm=Blue, NVIDIA=Green
+colors = ['#d62728', '#1f77b4', '#2ca02c', '#d62728', '#2ca02c', '#1f77b4']
 
 bars = ax.bar(labels, latencies, color=colors, alpha=0.8)
 
-ax.set_ylabel('YOLOv8 Latency (ms) - Lower is Better')
-ax.set_title('YOLOv8 Object Detection Profiling')
-add_labels(ax, bars)
+ax.set_ylabel('YOLOv8 Latency (ms) - Log Scale')
+ax.set_title('The Cost of FP32 vs Edge Quantization (YOLOv8)')
+ax.set_yscale('log')
+
+add_labels_log(ax, bars)
+plt.xticks(rotation=25, ha='right')
 plt.tight_layout()
 plt.savefig('assets/yolov8_latency.png', dpi=300)
 plt.close()
