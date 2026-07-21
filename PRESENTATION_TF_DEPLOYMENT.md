@@ -117,26 +117,7 @@ graph LR
 > 
 > Even though NVIDIA's Jetson Orin NX is mathematically faster per-component (using FP16 TensorRT), its total pipeline is bottlenecked by the strict 15W thermal constraint we must enforce for farm deployment. Let's look at how this latency translates to final throughput."
 
----
 
-## Slide 6: Hardware Latency Profiling (Native Log Metrics)
-**Visual**: 
-| Metric (Per Frame) | NVIDIA Jetson Orin NX (15W) | Qualcomm RB3 Gen2 | Radxa CM5 (RK3588) |
-|--------------------|-----------------------------|-------------------|--------------------|
-| **Hardware Decode**| 4.0ms (`NVDEC`) | 11.2ms (`V4L2 GPU`) | 8.0ms (`MPP`) |
-| **Memory Resizing**| 0.5ms (`nvvidconv`) | 1.1ms (`Adreno OpenCL`) | 1.5ms (`RGA Hardware`) |
-| **YOLOv8 INT8**    | 11.0ms (`TensorRT`) | 8.6ms (`Hexagon DSP`) | 12.5ms (`RKNN NPU`) |
-| **DINOv2 Exec.**   | 18.5ms (`TensorRT FP16`) | 23.0ms (`Hexagon INT8`) | 38.0ms (`RKNN INT8`) |
-| **BCS Head CPU**   | 1.5ms (`Cortex-A78AE`) | 1.5ms (`Cortex-A78`) | 1.8ms (`Cortex-A55`) |
-| **System RAM (RSS)**| 210.5 MiB | **165.2 MiB** | 185.0 MiB |
-| **CPU Utilization**| ~5% | ~8% | ~12% |
-
-**Speaker Script**:
-> "To prove these optimizations work, we extracted the raw C++ profiling logs directly from the silicon. 
-> 
-> As you can see in this table, the Zero-Copy architecture keeps CPU utilization extremely low across all boards. The Qualcomm RB3 Gen2 leverages the Hexagon DSP to process YOLOv8 in 8.6ms and DINOv2 in 23ms, operating strictly in INT8. 
-> 
-> Even though NVIDIA's Jetson Orin NX is mathematically faster per-component (using FP16 TensorRT), its total pipeline is bottlenecked by the strict 15W thermal constraint we must enforce for farm deployment."
 
 ---
 
@@ -160,7 +141,25 @@ xychart-beta
 
 ---
 
-## Slide 8: Throughput vs Power Efficiency
+## Slide 8: YOLOv8 Object Detection Profiling
+**Visual**: 
+```mermaid
+xychart-beta
+    title "YOLOv8 INT8 Latency (Lower is Better)"
+    x-axis ["Jetson (TensorRT INT8)", "Qualcomm (Hexagon INT8)", "Radxa (RKNN INT8)"]
+    y-axis "Latency (ms)" 0.0 --> 20.0
+    bar [11.0, 8.6, 12.5]
+```
+**Speaker Script**:
+> "While DINOv2 is the heaviest part of our pipeline, we cannot ignore the YOLOv8 object detector. 
+> 
+> Because YOLO is a highly optimized Convolutional Neural Network (CNN), it maps incredibly well to edge silicon. Here, the Qualcomm Hexagon DSP actually beats the NVIDIA Jetson's GPU, executing the entire YOLOv8 pass in just 8.6 milliseconds. 
+> 
+> This proves that for standard CNN architectures, dedicated DSPs and NPUs are often faster than general-purpose GPUs, while drawing only a fraction of the power."
+
+---
+
+## Slide 9: Throughput vs Power Efficiency
 **Visual**: 
 ```mermaid
 xychart-beta
@@ -185,7 +184,7 @@ xychart-beta
 
 ---
 
-## Slide 9: Edge Resilience & MLOps Fleet Orchestration
+## Slide 10: Edge Resilience & MLOps Fleet Orchestration
 **Visual**: 
 ```mermaid
 graph TD
@@ -201,7 +200,7 @@ graph TD
 
 ---
 
-## Slide 10: Conclusion
+## Slide 11: Conclusion
 **Speaker Script**:
 > "To conclude: 
 > 

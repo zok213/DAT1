@@ -143,4 +143,19 @@ plt.tight_layout()
 plt.savefig('assets/latency_breakdown.png', dpi=300)
 plt.close()
 
+# 6. YOLOv8 Object Detection Latency
+fig, ax = plt.subplots(figsize=(8, 6))
+labels = ['Jetson GPU\n(TensorRT INT8)', 'Qualcomm DSP\n(Hexagon INT8)', 'Radxa NPU\n(RKNN INT8)']
+latencies = [11.0, 8.6, 12.5]
+colors = ['#2ca02c', '#1f77b4', '#d62728']
+
+bars = ax.bar(labels, latencies, color=colors, alpha=0.8)
+
+ax.set_ylabel('YOLOv8 Latency (ms) - Lower is Better')
+ax.set_title('YOLOv8 Object Detection Profiling')
+add_labels(ax, bars)
+plt.tight_layout()
+plt.savefig('assets/yolov8_latency.png', dpi=300)
+plt.close()
+
 print("All plots generated successfully in assets/ directory!")
