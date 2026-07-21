@@ -18,6 +18,47 @@ To view the specific C++ pipeline implementations, benchmarking suites, and loca
 
 ---
 
+## 🔬 Machine Learning Architecture & Ablations
+
+Before deploying to physical edge hardware, the core Vision Transformer (DINOv2) pipeline was rigorously tested and ablated. The following diagrams and tables highlight the fundamental data constraints and the architectural decisions that survived statistical significance testing.
+
+### 1. The Multi-View Architecture Logic
+The pipeline extracts 384-dimensional features from a frozen DINOv2 backbone to prevent overfitting on our 321-animal dataset. We strictly evaluated multiple view-fusion strategies.
+
+```mermaid
+graph TD
+    V1[View 1] & V2[View 2] & V3[View 3] --> DINO[Frozen DINOv2 384-d]
+    DINO --> LN[LayerNorm + Linear 128-d + GELU]
+    LN --> VE[View-Type Embedding]
+    VE --> F{Fusion Hypothesis}
+    F -- Single --> H[Head]
+    F -- Meanpool --> H
+    F -- Full Attention --> H
+    H --> O{Output Hypothesis}
+    O -- Softmax --> OUT[3 Classes]
+    O -- CORAL --> OUT[Ordinal]
+```
+
+### 2. Ablation Results (95% Confidence Intervals)
+Cross-view attention and CORAL ordinal heads failed to show statistical significance over simpler models. *Train-Time Augmentation (TTA)* was the only intervention that yielded significant, robust gains.
+
+| Comparison (A vs B) | ΔQWK | 95% CI (Bootstrap) | Significant? |
+|---------------------|--------|--------------------|--------------|
+| **Softmax vs CORAL** | +0.105 | [-0.044, +0.254] | **No** (favors Softmax) |
+| **Single vs Attention** | +0.078 | [-0.149, +0.297] | **No** (Attention overfits) |
+| **ViT-B vs ViT-L** | +0.159 | [-0.048, +0.373] | **No** |
+| **Baseline vs TTA** | **+0.075** | **[+0.044, +0.335]** | **YES** |
+
+### 3. The CCTV Deployment Gap
+We quantified the shift between training datasets and real-world barn CCTV cameras. Unsupervised domain adaptation via mean/std alignment collapses this gap.
+
+| Domain Metric | Value | 95% CI |
+|---------------|-------|--------|
+| Centroid Cosine (Top vs CCTV) | 0.418 | [0.401, 0.433] |
+| Centroid Cosine (Top vs Side) | 0.458 | [0.442, 0.471] |
+
+---
+
 ## 📊 Cross-Platform Edge Comparison
 
 I have designed and simulated the absolute pinnacle architecture for all three boards. The following data represents the theoretical maximum throughput for the dual-model (YOLOv8 + DINOv2) pipeline using INT8 quantization and Zero-Copy memory sharing.
