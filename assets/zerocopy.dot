@@ -1,48 +1,44 @@
 digraph ZeroCopy {
-    rankdir=LR;
-    node [shape=box, style=filled, color="#333333", fillcolor="#f5f5f5", fontcolor="#000000", fontname="Arial", margin=0.3];
-    edge [color="#666666", fontcolor="#444444", fontname="Arial", fontsize=10];
+    rankdir=TB;
     bgcolor="white";
-    
-    subgraph cluster_nvidia {
-        label="NVIDIA Jetson Orin";
-        fontcolor="#000000";
-        fontname="Arial";
-        fontsize=14;
-        color="#cccccc";
-        margin=20;
-        NV [label="NVDEC Decoder"];
-        TRT [label="TensorRT Engine"];
-        NV -> TRT [label="NVMM Buffer"];
-    }
+    node [shape=none, margin=0];
+    edge [style=invis];
 
-    subgraph cluster_qualcomm {
-        label="Qualcomm RB3 Gen2";
-        fontcolor="#000000";
-        fontname="Arial";
-        fontsize=14;
-        color="#cccccc";
-        margin=20;
-        ADRENO [label="Adreno GPU"];
-        HEX [label="Hexagon DSP"];
-        ADRENO -> HEX [label="DMA-BUF / ION FD"];
-    }
+    NVIDIA [label=<
+    <table border="1" color="#cccccc" cellborder="0" cellspacing="15" cellpadding="10" bgcolor="white">
+        <tr><td colspan="3"><font point-size="14" face="Arial">NVIDIA Jetson Orin</font></td></tr>
+        <tr>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">NVDEC Decoder</font></td>
+            <td><font face="Arial" color="#666666" point-size="10">───── NVMM Buffer ─────▶</font></td>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">TensorRT Engine</font></td>
+        </tr>
+    </table>
+    >];
 
-    subgraph cluster_radxa {
-        label="Radxa CM5 RK3588";
-        fontcolor="#000000";
-        fontname="Arial";
-        fontsize=14;
-        color="#cccccc";
-        margin=20;
-        MPP [label="MPP Decoder"];
-        RGA [label="RGA Resizer"];
-        RKNN [label="RKNN NPU"];
-        MPP -> RGA [label="dma_buf"];
-        RGA -> RKNN [label="dma_buf"];
-    }
-    
-    # Force vertical stacking
-    NV -> ADRENO [style=invis];
-    ADRENO -> MPP [style=invis];
+    QUALCOMM [label=<
+    <table border="1" color="#cccccc" cellborder="0" cellspacing="15" cellpadding="10" bgcolor="white">
+        <tr><td colspan="3"><font point-size="14" face="Arial">Qualcomm RB3 Gen2</font></td></tr>
+        <tr>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">Adreno GPU</font></td>
+            <td><font face="Arial" color="#666666" point-size="10">── DMA-BUF / ION FD ──▶</font></td>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">Hexagon DSP</font></td>
+        </tr>
+    </table>
+    >];
+
+    RADXA [label=<
+    <table border="1" color="#cccccc" cellborder="0" cellspacing="15" cellpadding="10" bgcolor="white">
+        <tr><td colspan="5"><font point-size="14" face="Arial">Radxa CM5 RK3588</font></td></tr>
+        <tr>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">MPP Decoder</font></td>
+            <td><font face="Arial" color="#666666" point-size="10">── dma_buf ──▶</font></td>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">RGA Resizer</font></td>
+            <td><font face="Arial" color="#666666" point-size="10">── dma_buf ──▶</font></td>
+            <td bgcolor="#f5f5f5" border="1" color="#333333"><font face="Arial">RKNN NPU</font></td>
+        </tr>
+    </table>
+    >];
+
+    NVIDIA -> QUALCOMM;
+    QUALCOMM -> RADXA;
 }
