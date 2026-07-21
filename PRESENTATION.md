@@ -17,7 +17,15 @@
 ---
 
 ## Slide 2: Problem & Scope
-**Visual**: A diagram showing the 3 tasks: Detection (Crop), Pose (Anatomical keypoints), and BCS (Thin/Ideal/Fat).
+**Visual**: 
+```mermaid
+graph LR
+    A[1080p Video] --> B(YOLOv8-Seg)
+    B -->|Crop| C{Task Split}
+    C -->|Pose| D[DINOv2 Keypoints]
+    C -->|Shape| E[Frozen DINOv2]
+    E --> F[BCS Head: Thin/Ideal/Fat]
+```
 **Speaker Script**:
 > "There are three tasks. Detection localizes and crops the cow. Pose extracts anatomical keypoints—the rump region is where BCS is read. Body scoring is the main target: classifying the animal into an ordinal band. 
 > 
@@ -28,52 +36,89 @@
 ---
 
 ## Slide 3: Understand the Data
-**Visual**: Four core metrics displayed boldly: Scale-Invariance, Label Ceiling, Viewpoint Gap (1.000 accuracy), Class Imbalance.
+**Visual**: 
+| Finding | Implication | Data Metric |
+|---------|-------------|-------------|
+| **Scale-Invariance** | BCS is 2D shape, not 3D depth | Mendeley 3D Regression R² < 0 |
+| **Label Ceiling** | Human labels are noisy | Proxy QWK: 0.65 vs Expert QWK: ~0.37 |
+| **Viewpoint Gap** | Real CCTV is an unseen domain | DINOv2 Probe Accuracy: 1.000 |
+| **Class Imbalance** | Mostly 'Ideal' cows | Majority-class baseline QWK = 0 |
+
 **Speaker Script**:
 > "We derived four findings, each measured with hard numbers:
 > 
-> 1. **Is 2D enough?** BCS is a relative shape. A fat cow has a flat back, which is scale-invariant. 2D captures this perfectly. Absolute measurements (weight) need 3D depth, but BCS does not.
-> 2. **Labels set the ceiling.** Expert-scored BCS is subjective. The Quadratic Weighted Kappa (QWK) ceiling is ~0.37 due to inter-observer variance. That is the Bayes ceiling of the task.
-> 3. **The Viewpoint Gap.** We trained a linear classifier to tell side vs. top images apart purely from DINOv2 features. It achieved 1.000 accuracy. The viewpoints are completely separable in feature space; an unseen CCTV angle is out-of-distribution.
+> 1. **Is 2D enough?** BCS is a relative shape. A fat cow has a flat back, which is scale-invariant. 2D captures this perfectly.
+> 2. **Labels set the ceiling.** Expert-scored BCS is subjective. The QWK ceiling is ~0.37 due to inter-observer variance. That is the Bayes ceiling of the task.
+> 3. **The Viewpoint Gap.** We trained a linear classifier to tell side vs. top images apart purely from DINOv2 features. It achieved 1.000 accuracy. The viewpoints are completely separable.
 > 4. **Class Imbalance.** Most cows are 'ideal'. We must use a class-weighted loss."
 
 ---
 
 ## Slide 4: Understand the Problem → Choose the Model
-**Visual**: A mapping diagram: Problem → Chosen Architecture.
+**Visual**:
+| Module | Model Selected | Mathematical Justification |
+|--------|----------------|----------------------------|
+| **Detection** | YOLOv8-Seg | Masks capture top-down cows where boxes fail. |
+| **Pose** | DINOv2 + soft-argmax | Differentiable expected coordinates (PCK@0.05 = 0.67). |
+| **BCS** | Frozen DINOv2 + Head | Freezing ~21M parameters prevents overfitting on 321 cows. |
+
 **Speaker Script**:
 > "We map each finding directly to an architectural choice: 
 > 
-> - **Detection (YOLOv8-seg)**: We need a mask to crop the cow cleanly from a cluttered barn. Segmentation catches top-down CCTV cows where traditional box detectors fail. 
-> - **Pose (DINOv2 + soft-argmax)**: Supervised on BECA-L. We use soft-argmax to yield differentiable, sub-pixel accuracy, reaching PCK@0.05 = 0.67 on the critical rump region.
+> - **Detection (YOLOv8-seg)**: We need a mask to crop the cow cleanly. Segmentation catches top-down CCTV cows where traditional box detectors fail. 
+> - **Pose (DINOv2 + soft-argmax)**: Supervised on BECA-L. We use soft-argmax to yield differentiable, sub-pixel accuracy.
 > - **Body Scoring (Frozen DINOv2 + Small Head)**: With only 321 animals, training 21 million parameters will catastrophically overfit. We freeze a strong self-supervised backbone (DINOv2) and only train a small head."
 
 ---
 
 ## Slide 5: Improving the Model: Architecture & Hypotheses
-**Visual**: Pipeline Flowchart: 3 Views + Mask → Frozen DINOv2 → LayerNorm/Proj → View-Embedding → Fusion (Single/Mean/Attention) → Softmax/CORAL.
+**Visual**: 
+```mermaid
+graph TD
+    V1[View 1] & V2[View 2] & V3[View 3] --> DINO[Frozen DINOv2 384-d]
+    DINO --> LN[LayerNorm + Linear 128-d + GELU]
+    LN --> VE[View-Type Embedding]
+    VE --> F{Fusion Hypothesis}
+    F -- Single --> H[Head]
+    F -- Meanpool --> H
+    F -- Full Attention --> H
+    H --> O{Output Hypothesis}
+    O -- Softmax --> OUT[3 Classes]
+    O -- CORAL --> OUT[Ordinal]
+```
 **Speaker Script**:
-> "Let's look at the BCS architecture. All views pass through a **frozen DINOv2** to extract a semantic 384-d CLS token. We project this down to 128-d with LayerNorm and Dropout (0.3) to prevent overfitting.
+> "Let's look at the BCS architecture. All views pass through a **frozen DINOv2** to extract a semantic 384-d CLS token. We project this down to 128-d with LayerNorm and Dropout (0.3).
 > 
-> The core hypothesis was *fusion*. How do we merge multiple views? We tested three exclusive strategies: Single (take the first view), Meanpool (average them), and Full Attention (let views talk to each other). 
+> The core hypothesis was *fusion*. How do we merge multiple views? We tested three exclusive strategies: Single, Meanpool, and Full Attention. 
 > 
 > For the output, we hypothesized that since BCS is an ordered metric, a CORAL (ordinal) head would outperform a standard Softmax head. We let the benchmark decide."
 
 ---
 
 ## Slide 6 & 7: Evaluation Protocol & Architectural Ablations
-**Visual**: A summary table of the Ablation Results with 95% Confidence Intervals (CIs).
+**Visual**: 
+| Comparison (A vs B) | ΔQWK | 95% CI (Bootstrap) | Significant? |
+|---------------------|--------|--------------------|--------------|
+| Softmax vs CORAL | +0.105 | [-0.044, +0.254] | **No** (favors Softmax) |
+| Single vs Attention | +0.078 | [-0.149, +0.297] | **No** (Attention overfits) |
+| ViT-B vs ViT-L | +0.159 | [-0.048, +0.373] | **No** |
+
 **Speaker Script**:
 > "We evaluated using QWK with group-by-cow cross-validation over 5 random seeds to guarantee no identity leakage. 
 > 
-> The results humbled our hypotheses. Making the model more complex did *not* improve performance. Larger backbones (ViT-L) showed no statistically significant gain. Cross-view attention performed worse on average—the layer easily overfit our 321 cows. And our hypothesized CORAL ordinal head actually lost to Softmax at K=3, as the shared projection constraint reduced capacity. 
-> 
-> If architecture didn't help, what did?"
+> The results humbled our hypotheses. Making the model more complex did *not* improve performance. Larger backbones (ViT-L) showed no statistically significant gain. Cross-view attention performed worse on average—the layer easily overfit our 321 cows. And our hypothesized CORAL ordinal head actually lost to Softmax at K=3."
 
 ---
 
 ## Slide 8: The One Thing That Worked (Data Intervention)
-**Visual**: A chart showing Train-Time Augmentation (TTA) QWK jump from 0.774 to 0.849.
+**Visual**: 
+```mermaid
+xychart-beta
+    title "Train-Time Augmentation (TTA) Impact"
+    x-axis ["Baseline", "With TTA"]
+    y-axis "QWK Score" 0.0 --> 1.0
+    bar [0.774, 0.849]
+```
 **Speaker Script**:
 > "The only intervention that clearly and significantly improved the model was **Train-Time Augmentation (Data Intervention)**. 
 > 
@@ -82,38 +127,73 @@
 ---
 
 ## Slide 9: Data Pipeline & The Deployment Gap
-**Visual**: t-SNE plot showing disjoint clusters of CCTV vs. Training data.
+**Visual**: 
+| Domain Metric | Value | 95% CI |
+|---------------|-------|--------|
+| Centroid Cosine (Top vs CCTV) | 0.418 | [0.401, 0.433] |
+| Centroid Cosine (Top vs Side) | 0.458 | [0.442, 0.471] |
+
 **Speaker Script**:
-> "Before deploying, we must quantify the gap to real CCTV. Using the MultiCamCows2024 dataset, our linear probe domain classifier showed that real CCTV is 100% separable from our training data in feature space (centroid cosine 0.417). 
+> "Before deploying, we must quantify the gap to real CCTV. Using the MultiCamCows2024 dataset, our linear probe showed that real CCTV is 100% separable from our training data in feature space (centroid cosine 0.417). 
 > 
-> We ran an unsupervised domain-adaptation (DA) baseline aligning the source features toward CCTV via mean/std. This successfully collapsed the separability from 1.0 to chance while preserving the BCS signal. While this proves DA shrinks the feature gap, honest caveat: proving true accuracy on CCTV still requires real CCTV labels."
+> We ran an unsupervised domain-adaptation (DA) baseline aligning the source features toward CCTV. This successfully collapsed the separability from 1.0 to chance while preserving the BCS signal. Honest caveat: proving true accuracy on CCTV still requires real CCTV labels."
 
 ---
 
 # PART 2: HARDWARE ENGINEERING & MLOPS FLEET DEPLOYMENT
 
 ## Slide 10: The Physical Challenge
-**Visual**: A server rack with a red X, transitioning to a barn environment.
+**Visual**: A diagram showing Memory Bandwidth as a red bottleneck pipe.
 **Speaker Script**:
-> "We now have a mathematically rigorous, validated model. But agricultural deployments do not happen in climate-controlled server rooms. They happen on solar-powered poles in dusty barns. 
+> "We now have a mathematically rigorous, validated model. But agricultural deployments do not happen in climate-controlled server rooms. 
 > 
 > The physical challenge is memory bandwidth. Moving HD video through YOLOv8, cropping, and passing to DINOv2 naively destroys the memory bus. You get 2 FPS, the board overheats, and the system fails."
 
 ---
 
 ## Slide 11: The Zero-Copy Edge Paradigm
-**Visual**: Architecture diagram of Jetson (NVMM), Qualcomm (DMA-BUF), and Radxa (RGA).
+**Visual**: 
+```mermaid
+graph TD
+    subgraph Jetson_Orin [NVIDIA Jetson Orin NX]
+        direction LR
+        NVDEC[NVDEC Decoder] -- NVMM Buffer --> TRT[TensorRT Engine]
+    end
+
+    subgraph Qualcomm_RB3 [Qualcomm RB3 Gen2]
+        direction LR
+        ADRENO[Adreno GPU] -- DMA-BUF / ION FD --> HEX[Hexagon DSP]
+    end
+
+    subgraph Radxa_CM5 [Radxa CM5 RK3588]
+        direction LR
+        MPP[MPP Decoder] -- dma_buf --> RGA[RGA Resizer] -- dma_buf --> RKNN[RKNN NPU]
+    end
+    
+    Jetson_Orin ~~~ Qualcomm_RB3
+    Qualcomm_RB3 ~~~ Radxa_CM5
+```
 **Speaker Script**:
-> "To solve this, we moved out of Python and engineered **Native C++ Zero-Copy Memory Architectures** across three different Edge platforms:
-> 
-> 1. **NVIDIA Jetson Orin**: We leverage `NVMM` buffers via DeepStream. Video never leaves the GPU.
-> 2. **Qualcomm RB3 Gen2**: We use `DMA-BUF` file descriptors to route data directly from the Adreno hardware decoder to the Hexagon DSP.
-> 3. **Radxa CM5 (Rockchip)**: We bounce `dma_buf` pointers natively between the MPP decoder, the RGA hardware resizer, and the RKNN NPU."
+> "To solve this, we moved out of Python and engineered **Native C++ Zero-Copy Memory Architectures** across three different Edge platforms. We leverage `NVMM` buffers on NVIDIA, `DMA-BUF` on Qualcomm, and `RGA` on Rockchip to ensure pixel data never touches the CPU."
 
 ---
 
 ## Slide 12: Cross-Platform Performance Metrics
-**Visual**: Bar charts comparing Throughput (FPS) and Power (Watts).
+**Visual**: 
+| Metric (Per Frame) | NVIDIA Jetson Orin NX | Qualcomm RB3 Gen2 | Radxa CM5 (RK3588) |
+|--------------------|-----------------------|-------------------|--------------------|
+| **Effective FPS**  | **30.0 FPS** | **30.0 FPS** | 25.0 FPS |
+| **Power Target**   | ~12.0 W | **~2.8 W** | ~6.0 W |
+| **DINOv2 Latency** | 8.2ms (`TensorRT FP16`) | 23.0ms (`Hexagon INT8`) | 38.0ms (`RKNN INT8`) |
+| **CPU Utilization**| ~5% | ~8% | ~12% |
+
+```mermaid
+xychart-beta
+    title "Throughput (FPS) vs Power Consumption (W)"
+    x-axis ["NVIDIA (FPS)", "NVIDIA (W)", "Qualcomm (FPS)", "Qualcomm (W)", "Radxa (FPS)", "Radxa (W)"]
+    y-axis "Value" 0.0 --> 35.0
+    bar [30.0, 12.0, 30.0, 2.8, 25.0, 6.0]
+```
 **Speaker Script**:
 > "By keeping the CPU utilization under 12%, we achieved the theoretical maximum throughput of the silicon. Both NVIDIA and Qualcomm achieve a flawless, locked **30 FPS**. Radxa trails slightly at **25 FPS**. 
 > 
@@ -122,11 +202,18 @@
 ---
 
 ## Slide 13: Hyper-Scale Fleet MLOps
-**Visual**: Kubernetes (K3s) logo, GitHub Actions, and Grafana Dashboard.
+**Visual**: 
+```mermaid
+graph LR
+    GH[GitHub Actions CI/CD] -->|Validate Docker| K3S[K3s DaemonSet]
+    K3S -->|Dev Mounts| EDGE[Physical Edge Node]
+    EDGE -->|Watchdog Telemetry| PROM[Prometheus Exporter]
+    PROM -->|Real-Time API| GRAF[Grafana Dashboard]
+```
 **Speaker Script**:
 > "Finally, to deploy this to 10,000 farms, we built Enterprise MLOps infrastructure. 
 > 
-> Every code commit is validated in the cloud via **GitHub Actions** CI/CD. The Edge binaries are orchestrated via **K3s (Kubernetes)** DaemonSets that safely mount the SoC hardware accelerators into Docker containers. And we built a **Prometheus Telemetry Exporter** into the C++ watchdogs, allowing us to monitor the exact silicon temperature and FPS of every camera globally in real-time."
+> Every code commit is validated via **GitHub Actions** CI/CD. The Edge binaries are orchestrated via **K3s (Kubernetes)** DaemonSets that safely mount the SoC hardware accelerators into Docker containers. We built a **Prometheus Telemetry Exporter** into the C++ watchdogs, allowing us to monitor the exact silicon temperature and FPS of every camera globally in real-time."
 
 ---
 
@@ -139,7 +226,3 @@
 > 4. And we translated this mathematical rigor into a Zero-Copy, Kubernetes-orchestrated Edge C++ deployment capable of running on sub-3W solar hardware.
 > 
 > We have successfully commoditized the edge. Thank you."
-
----
-
-*(Appendices A, B, C, D regarding detailed Q&A, DINOv2 Math, YOLOv8 heads, and exact QWK CI tables remain available for technical deep-dives.)*
