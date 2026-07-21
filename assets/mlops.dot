@@ -1,0 +1,17 @@
+digraph MLOps {
+    rankdir=TD;
+    node [shape=box, style=filled, color="#5B5B9F", fillcolor="#e0e5ff", fontcolor="#333333", fontname="Arial", margin=0.2];
+    edge [color="#666666", fontcolor="#333333", fontname="Arial", fontsize=10];
+    bgcolor="#ffb900"; 
+
+    K3S [label="K3s Kubernetes"];
+    BARN [label="Physical Barn Node"];
+    TFL [label="TFLite Engine"];
+    THROTTLE [label="Drop FPS to Cool"];
+    PROM [label="Prometheus / Grafana"];
+
+    K3S -> BARN [label="OTA TF Weights"];
+    BARN -> TFL [label="C++ Thermal Watchdog"];
+    TFL -> THROTTLE [label="> 75°C"];
+    BARN -> PROM [label="Offline Cache"];
+}

@@ -1,0 +1,48 @@
+digraph ZeroCopy {
+    rankdir=LR;
+    node [shape=box, style=filled, color="#555555", fillcolor="#222222", fontcolor="#ffffff", fontname="Arial", margin=0.3];
+    edge [color="#888888", fontcolor="#aaaaaa", fontname="Arial", fontsize=10];
+    bgcolor="#121212";
+    
+    subgraph cluster_nvidia {
+        label="NVIDIA Jetson Orin";
+        fontcolor="#ffffff";
+        fontname="Arial";
+        fontsize=14;
+        color="#444444";
+        margin=20;
+        NV [label="NVDEC Decoder"];
+        TRT [label="TensorRT Engine"];
+        NV -> TRT [label="NVMM Buffer"];
+    }
+
+    subgraph cluster_qualcomm {
+        label="Qualcomm RB3 Gen2";
+        fontcolor="#ffffff";
+        fontname="Arial";
+        fontsize=14;
+        color="#444444";
+        margin=20;
+        ADRENO [label="Adreno GPU"];
+        HEX [label="Hexagon DSP"];
+        ADRENO -> HEX [label="DMA-BUF / ION FD"];
+    }
+
+    subgraph cluster_radxa {
+        label="Radxa CM5 RK3588";
+        fontcolor="#ffffff";
+        fontname="Arial";
+        fontsize=14;
+        color="#444444";
+        margin=20;
+        MPP [label="MPP Decoder"];
+        RGA [label="RGA Resizer"];
+        RKNN [label="RKNN NPU"];
+        MPP -> RGA [label="dma_buf"];
+        RGA -> RKNN [label="dma_buf"];
+    }
+    
+    # Force vertical stacking
+    NV -> ADRENO [style=invis];
+    ADRENO -> MPP [style=invis];
+}
