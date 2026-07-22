@@ -14,21 +14,26 @@
 
 ---
 
-## 🐳 Production CUDA Docker & Live RTSP Stream Engine
+## 🐳 Production CUDA Docker & Multi-Camera RTSP Engine
 
-Package and deploy the entire pipeline as a multi-container stack with **NVIDIA T4 GPU hardware acceleration**, real-time telemetry overlays, and live **RTSP stream broadcasting**:
+Package and deploy the entire pipeline as a multi-container stack with **NVIDIA T4 GPU hardware acceleration**, real-time telemetry overlays, multi-camera stream batching, and live **RTSP stream broadcasting**:
 
 ```bash
-# 1. Launch RTSP Server & T4 GPU Pipeline via Docker Compose
-docker-compose up --build -d
+# 1. Run Statistical Accuracy & Latency Evaluation (QWK, MAE, p50/p90/p99)
+python scripts/evaluate_bcs_pipeline.py --num-samples 500
 
-# 2. Run Live RTSP Pipeline directly via Python CLI
-python scripts/t4_rtsp_pipeline.py --input sample_cow_video.mp4 --precision fp16
+# 2. Run Multi-Camera RTSP Stream Batcher (4 Streams)
+python scripts/multi_rtsp_stream_manager.py --num-cameras 4
+
+# 3. Launch RTSP Server & T4 GPU Pipeline via Docker Compose
+docker-compose up --build -d
 ```
 
 * Master CUDA Dockerfile: [Dockerfile.gpu](file:///d:/Gitrepo/DAT1/Dockerfile.gpu)
 * Multi-Container Orchestration: [docker-compose.yml](file:///d:/Gitrepo/DAT1/docker-compose.yml)
 * Live RTSP Stream Engine Script: [t4_rtsp_pipeline.py](file:///d:/Gitrepo/DAT1/scripts/t4_rtsp_pipeline.py)
+* Multi-Camera Stream Batcher: [multi_rtsp_stream_manager.py](file:///d:/Gitrepo/DAT1/scripts/multi_rtsp_stream_manager.py)
+* Pipeline Statistical Evaluator: [evaluate_bcs_pipeline.py](file:///d:/Gitrepo/DAT1/scripts/evaluate_bcs_pipeline.py)
 
 ---
 
@@ -96,3 +101,4 @@ python scripts/colab_cli_automation.py --gpu T4 --quantize int8
 - [09_direct_colab_api_automation_deep_dive.md](file:///d:/Gitrepo/DAT1/reports/09_direct_colab_api_automation_deep_dive.md): Direct zero-click local CLI to Google Colab T4 GPU execution.
 - [10_google_colab_cli_deep_dive_guide.md](file:///d:/Gitrepo/DAT1/reports/10_google_colab_cli_deep_dive_guide.md): Official `google-colab-cli` technical research and engineering guide.
 - [11_t4_gpu_rtsp_docker_pipeline_audit.md](file:///d:/Gitrepo/DAT1/reports/11_t4_gpu_rtsp_docker_pipeline_audit.md): T4 GPU RTSP stream & Docker pipeline architecture audit.
+- [12_principal_ai_architect_final_master_audit.md](file:///d:/Gitrepo/DAT1/reports/12_principal_ai_architect_final_master_audit.md): Principal AI Architect Final Master Audit & Benchmark Report.
