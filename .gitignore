@@ -10,9 +10,20 @@ venv/
 *.tflite
 *.dlc
 *.zst
+*.engine
+*.rknn
 debian-binary
 control.tar.zst
 data.tar.zst
+coco8-seg.yaml
+
+# Ignore nested git submodules / Hugging Face space workspace
+hf_space/
+
+# Ignore build output directories
+build/
+jetson_orin_nano/build/
+radxa_cm5/build/
 
 # Ignore wheels and dependencies
 wheels/

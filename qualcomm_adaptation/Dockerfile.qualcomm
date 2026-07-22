@@ -1,0 +1,24 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    libopencv-dev \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY . /app
+
+RUN python3 -m pip install --upgrade pip
+RUN pip install numpy opencv-python onnxruntime ultralytics
+
+CMD ["python3", "-m", "qualcomm_adaptation", "--yolo", "models/yolov8n_seg.onnx", "--dino", "qnn_models/dinov2_fp32_net.json"]

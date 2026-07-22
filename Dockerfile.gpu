@@ -1,0 +1,44 @@
+FROM nvcr.io/nvidia/cuda:12.2.2-devel-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install system dependencies, OpenCV, GStreamer, FFmpeg
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    curl \
+    pkg-config \
+    python3-dev \
+    python3-pip \
+    python3-opencv \
+    libopencv-dev \
+    ffmpeg \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-rtsp \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Upgrade pip and install Python ML libraries
+RUN python3 -m pip install --upgrade pip setuptools wheel
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+RUN pip install ultralytics onnx onnxruntime-gpu numpy scipy Pillow matplotlib psutil tqdm pyyaml
+
+# Copy repository source files
+COPY . /app
+
+# Expose RTSP / Streaming ports
+EXPOSE 8554 8080
+
+CMD ["python3", "scripts/t4_rtsp_pipeline.py", "--input", "sample_cow_video.mp4", "--precision", "fp16"]

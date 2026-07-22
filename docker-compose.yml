@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # MediaMTX Real-Time RTSP Stream Server
+  rtsp-server:
+    image: bluenviron/mediamtx:latest
+    container_name: bcs_rtsp_server
+    ports:
+      - "8554:8554"  # RTSP stream port
+      - "1935:1935"  # RTMP port
+      - "8888:8888"  # HLS web stream port
+
+  # T4 GPU Cow BCS Video Processing Pipeline
+  bcs-pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    container_name: bcs_t4_pipeline
+    depends_on:
+      - rtsp-server
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all,compute,utility,video
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, video]
+    command: python3 scripts/t4_rtsp_pipeline.py --input sample_cow_video.mp4 --rtsp-out rtsp://rtsp-server:8554/bcs_live --precision fp16
