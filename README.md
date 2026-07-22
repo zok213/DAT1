@@ -16,6 +16,24 @@
 
 ---
 
+## 🔌 Free Google Colab GPU & Disconnect Recovery Suite
+
+Compile models on Google Colab's Free T4 GPU using official `google-colab-cli` with **anti-disconnect heartbeat daemons** and **automatic reconnect retry loops**:
+
+```bash
+# 1. Run Colab CLI Auto-Reconnect & Retry Manager
+python scripts/colab_cli_auto_reconnect.py --gpu T4 --max-retries 3
+
+# 2. Run Heartbeat Anti-Disconnect Daemon inside Colab
+python scripts/colab_anti_disconnect.py &
+```
+
+* Colab Disconnect & Limits Research: [14_colab_t4_gpu_disconnection_and_limits_research.md](file:///d:/Gitrepo/DAT1/reports/14_colab_t4_gpu_disconnection_and_limits_research.md)
+* Auto-Reconnect Retry Suite: [colab_cli_auto_reconnect.py](file:///d:/Gitrepo/DAT1/scripts/colab_cli_auto_reconnect.py)
+* Heartbeat Anti-Disconnect Daemon: [colab_anti_disconnect.py](file:///d:/Gitrepo/DAT1/scripts/colab_anti_disconnect.py)
+
+---
+
 ## 🚀 SOTA Ultimate Edge AI Optimizer (181.1 FPS Execution)
 
 Achieve theoretical hardware execution limits using **YOLO-Kalman Motion Cascades** (80% detection compute reduction) and **DINOv2 Attention-Weighted Spatial Token Pooling**:
@@ -69,26 +87,6 @@ python run_all_platforms.py --target radxa --video sample_cow_video.mp4
 
 ---
 
-## 🔌 Free Google Colab GPU & Direct Local CLI Execution
-
-Compile all models (YOLOv8n-seg, DINOv2 ViT-S/14, BcsHead) into TensorRT, TFLite (FP32/FP16/INT8), RKNN, and QNN binaries using Google's official `google-colab-cli` tool:
-
-```bash
-# Install official Google Colab CLI
-pip install google-colab-cli
-
-# 1-Click Automated Cloud Model Compilation on Free Colab T4 GPU
-python scripts/colab_cli_automation.py --gpu T4 --quantize int8
-```
-
-* Official Colab CLI Automation Script: [colab_cli_automation.py](file:///d:/Gitrepo/DAT1/scripts/colab_cli_automation.py)
-* Direct Local-to-Colab CLI Runner: [direct_colab_runner.py](file:///d:/Gitrepo/DAT1/scripts/direct_colab_runner.py)
-* Model Compiler Notebook: [colab_gpu_model_compiler.ipynb](file:///d:/Gitrepo/DAT1/notebooks/colab_gpu_model_compiler.ipynb)
-* Master Converter Script: [compile_all_models.py](file:///d:/Gitrepo/DAT1/scripts/compile_all_models.py)
-* TFLite Quantizer: [compile_to_tflite.py](file:///d:/Gitrepo/DAT1/scripts/compile_to_tflite.py)
-
----
-
 ## 📊 Cross-Platform Benchmark Matrix
 
 | Metric (Per Frame) | NVIDIA Jetson Orin NX (15W Mode) | Qualcomm RB3 Gen2 (Native ~5W) | Radxa CM5 (RK3588 Native ~6W) |
@@ -119,3 +117,4 @@ python scripts/colab_cli_automation.py --gpu T4 --quantize int8
 - [11_t4_gpu_rtsp_docker_pipeline_audit.md](file:///d:/Gitrepo/DAT1/reports/11_t4_gpu_rtsp_docker_pipeline_audit.md): T4 GPU RTSP stream & Docker pipeline architecture audit.
 - [12_principal_ai_architect_final_master_audit.md](file:///d:/Gitrepo/DAT1/reports/12_principal_ai_architect_final_master_audit.md): Principal AI Architect Final Master Audit & Benchmark Report.
 - [13_ultimate_ai_engineering_optimization_guide.md](file:///d:/Gitrepo/DAT1/reports/13_ultimate_ai_engineering_optimization_guide.md): SOTA Edge AI Engineering & Optimization Guide.
+- [14_colab_t4_gpu_disconnection_and_limits_research.md](file:///d:/Gitrepo/DAT1/reports/14_colab_t4_gpu_disconnection_and_limits_research.md): Google Colab T4 GPU Disconnect Rules, Limits & Mitigation Guide.
