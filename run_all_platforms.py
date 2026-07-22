@@ -62,7 +62,7 @@ def run_pipeline(target: str, video_path: str, config_path: str):
         cmd = [sys.executable, "-m", "qualcomm_adaptation", "--video", video_path, "--config", config_path]
     else:
         print("[INFO] Launching CPU Fallback ONNX Runtime Pipeline...")
-        cmd = [sys.executable, "-m", "qualcomm_adaptation", "--video", video_path, "--config", config_path, "--no-display"]
+        cmd = [sys.executable, "-m", "qualcomm_adaptation", "--video", video_path, "--config", config_path, "--benchmark"]
 
     print(f"[CMD] Executing: {' '.join(cmd)}")
     subprocess.run(cmd)
