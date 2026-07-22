@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # MediaMTX Real-Time RTSP Stream Server
   rtsp-server:
@@ -15,6 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.gpu
+    image: bcs_t4_pipeline:latest
     container_name: bcs_t4_pipeline
     depends_on:
       - rtsp-server
