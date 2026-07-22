@@ -11,6 +11,8 @@
 1. [jetson_orin_nano](file:///d:/Gitrepo/DAT1/jetson_orin_nano): NVIDIA Jetson Orin Nano / Orin NX (DeepStream 6.x/7.x + NVMM Zero-Copy + TensorRT 10.x).
 2. [qualcomm_adaptation](file:///d:/Gitrepo/DAT1/qualcomm_adaptation): Qualcomm RB3 Gen2 (QCM6490) using Hexagon DSP / QAIRT SDK / DMA-BUF ION zero-copy memory.
 3. [radxa_cm5](file:///d:/Gitrepo/DAT1/radxa_cm5): Radxa CM5 (Rockchip RK3588) using RKNN NPU 3-Core engine / MPP decoder / RGA 2D graphics hardware.
+4. [cuda_native_pipeline](file:///d:/Gitrepo/DAT1/cuda_native_pipeline): Native C++ & CUDA Custom Kernel Zero-Copy Engine (`cuda_kernels.cu`).
+5. [rust_rtsp_dispatcher](file:///d:/Gitrepo/DAT1/rust_rtsp_dispatcher): Ultra-Low Latency Rust (`tokio` async runtime) Multi-Stream RTSP Dispatcher.
 
 ---
 

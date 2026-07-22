@@ -1,0 +1,8 @@
+[package]
+name = "rust_rtsp_dispatcher"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.28", features = ["full"] }
+chrono = "0.4"
