@@ -16,6 +16,20 @@
 
 ---
 
+## 🏆 13-Format Master Model Optimization & Comparison Suite
+
+Benchmark and compare model performance across 13 formats (TensorRT, QNN, RKNN, TFLite W8A8/W8A16/FP16/FP32, ONNX, PyTorch):
+
+```bash
+# Execute 13-Format Master Benchmark Suite
+python scripts/master_model_comparator.py --num-samples 200
+```
+
+* Master Model Comparator Script: [master_model_comparator.py](file:///d:/Gitrepo/DAT1/scripts/master_model_comparator.py)
+* Landmark Comparison Atlas Paper: [16_master_model_optimization_and_comparison_atlas.md](file:///d:/Gitrepo/DAT1/reports/16_master_model_optimization_and_comparison_atlas.md)
+
+---
+
 ## ⚡ Advanced TFLite Multi-Quantization Suite (W8A8, W8A16, FP16, FP32)
 
 Convert and benchmark across all 5 major TFLite quantization schemes:
@@ -85,6 +99,22 @@ docker-compose up --build -d
 
 ---
 
+## 🚀 Unified Master Execution Runner
+
+You can execute the pipeline across any hardware target using the unified auto-detecting runner [run_all_platforms.py](file:///d:/Gitrepo/DAT1/run_all_platforms.py):
+
+```bash
+# Auto-detect hardware platform and run inference
+python run_all_platforms.py --video sample_cow_video.mp4
+
+# Force specific target platform execution
+python run_all_platforms.py --target jetson --video sample_cow_video.mp4
+python run_all_platforms.py --target qualcomm --video sample_cow_video.mp4
+python run_all_platforms.py --target radxa --video sample_cow_video.mp4
+```
+
+---
+
 ## 📊 Cross-Platform Benchmark Matrix
 
 | Metric (Per Frame) | NVIDIA Jetson Orin NX (15W Mode) | Qualcomm RB3 Gen2 (Native ~5W) | Radxa CM5 (RK3588 Native ~6W) |
@@ -117,3 +147,4 @@ docker-compose up --build -d
 - [13_ultimate_ai_engineering_optimization_guide.md](file:///d:/Gitrepo/DAT1/reports/13_ultimate_ai_engineering_optimization_guide.md): SOTA Edge AI Engineering & Optimization Guide.
 - [14_colab_t4_gpu_disconnection_and_limits_research.md](file:///d:/Gitrepo/DAT1/reports/14_colab_t4_gpu_disconnection_and_limits_research.md): Google Colab T4 GPU Disconnect Rules, Limits & Mitigation Guide.
 - [15_tflite_quantization_w8a8_w8a16_deep_dive.md](file:///d:/Gitrepo/DAT1/reports/15_tflite_quantization_w8a8_w8a16_deep_dive.md): Deep-Dive TFLite Quantization Research Report (W8A8, W8A16, FP16, FP32).
+- [16_master_model_optimization_and_comparison_atlas.md](file:///d:/Gitrepo/DAT1/reports/16_master_model_optimization_and_comparison_atlas.md): Landmark 13-Format Master Model Optimization and Comparison Atlas.
