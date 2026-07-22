@@ -1,0 +1,13 @@
+.git
+.github
+*.mp4
+*.avi
+*.mov
+models/
+output_*.mp4
+__pycache__
+*.pyc
+*.pyo
+node_modules
+/tmp
+.gemini
