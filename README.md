@@ -16,6 +16,25 @@
 
 ---
 
+## 🌐 Enterprise Microservices & Prometheus Telemetry
+
+Deploy as an enterprise microservice stack with **FastAPI REST APIs** and **Prometheus / Grafana monitoring**:
+
+```bash
+# 1. Launch FastAPI REST API Service (Port 8000)
+python scripts/bcs_rest_api_service.py --port 8000
+
+# 2. Launch Prometheus Telemetry Exporter (Port 9090)
+python scripts/prometheus_exporter.py --port 9090
+```
+
+* Master Architecture Blueprint: [18_enterprise_edge_ai_master_blueprint.md](file:///d:/Gitrepo/DAT1/reports/18_enterprise_edge_ai_master_blueprint.md)
+* REST API Microservice: [bcs_rest_api_service.py](file:///d:/Gitrepo/DAT1/scripts/bcs_rest_api_service.py)
+* Prometheus Telemetry Exporter: [prometheus_exporter.py](file:///d:/Gitrepo/DAT1/scripts/prometheus_exporter.py)
+* GitHub Actions CI/CD Pipeline: [.github/workflows/edge-build.yml](file:///d:/Gitrepo/DAT1/.github/workflows/edge-build.yml)
+
+---
+
 ## 🚀 Real NVIDIA Tesla T4 Cloud GPU Master Benchmark
 
 Benchmark 10 CUDA execution backends directly on Tesla T4 GPU hardware (TensorRT INT8: **285.6 FPS**, TensorRT FP16: **121.9 FPS**, ORT CUDA: **86.9 FPS**):
@@ -164,3 +183,4 @@ python run_all_platforms.py --target radxa --video sample_cow_video.mp4
 - [15_tflite_quantization_w8a8_w8a16_deep_dive.md](file:///d:/Gitrepo/DAT1/reports/15_tflite_quantization_w8a8_w8a16_deep_dive.md): Deep-Dive TFLite Quantization Research Report (W8A8, W8A16, FP16, FP32).
 - [16_master_model_optimization_and_comparison_atlas.md](file:///d:/Gitrepo/DAT1/reports/16_master_model_optimization_and_comparison_atlas.md): Landmark 13-Format Master Model Optimization and Comparison Atlas.
 - [17_real_cloud_t4_gpu_hardware_benchmark_matrix.md](file:///d:/Gitrepo/DAT1/reports/17_real_cloud_t4_gpu_hardware_benchmark_matrix.md): Real NVIDIA Tesla T4 Cloud GPU Hardware Benchmark Matrix.
+- [18_enterprise_edge_ai_master_blueprint.md](file:///d:/Gitrepo/DAT1/reports/18_enterprise_edge_ai_master_blueprint.md): Enterprise Edge AI Architecture & Deployment Blueprint.
