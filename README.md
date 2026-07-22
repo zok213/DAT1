@@ -16,6 +16,20 @@
 
 ---
 
+## ⚡ Advanced TFLite Multi-Quantization Suite (W8A8, W8A16, FP16, FP32)
+
+Convert and benchmark across all 5 major TFLite quantization schemes:
+
+```bash
+# Run Advanced TFLite Quantization Converter
+python scripts/compile_tflite_advanced.py --output-dir models/tflite
+```
+
+* TFLite Advanced Converter: [compile_tflite_advanced.py](file:///d:/Gitrepo/DAT1/scripts/compile_tflite_advanced.py)
+* TFLite Quantization Deep Dive Report: [15_tflite_quantization_w8a8_w8a16_deep_dive.md](file:///d:/Gitrepo/DAT1/reports/15_tflite_quantization_w8a8_w8a16_deep_dive.md)
+
+---
+
 ## 🔌 Free Google Colab GPU & Disconnect Recovery Suite
 
 Compile models on Google Colab's Free T4 GPU using official `google-colab-cli` with **anti-disconnect heartbeat daemons** and **automatic reconnect retry loops**:
@@ -71,22 +85,6 @@ docker-compose up --build -d
 
 ---
 
-## 🚀 Unified Master Execution Runner
-
-You can execute the pipeline across any hardware target using the unified auto-detecting runner [run_all_platforms.py](file:///d:/Gitrepo/DAT1/run_all_platforms.py):
-
-```bash
-# Auto-detect hardware platform and run inference
-python run_all_platforms.py --video sample_cow_video.mp4
-
-# Force specific target platform execution
-python run_all_platforms.py --target jetson --video sample_cow_video.mp4
-python run_all_platforms.py --target qualcomm --video sample_cow_video.mp4
-python run_all_platforms.py --target radxa --video sample_cow_video.mp4
-```
-
----
-
 ## 📊 Cross-Platform Benchmark Matrix
 
 | Metric (Per Frame) | NVIDIA Jetson Orin NX (15W Mode) | Qualcomm RB3 Gen2 (Native ~5W) | Radxa CM5 (RK3588 Native ~6W) |
@@ -118,3 +116,4 @@ python run_all_platforms.py --target radxa --video sample_cow_video.mp4
 - [12_principal_ai_architect_final_master_audit.md](file:///d:/Gitrepo/DAT1/reports/12_principal_ai_architect_final_master_audit.md): Principal AI Architect Final Master Audit & Benchmark Report.
 - [13_ultimate_ai_engineering_optimization_guide.md](file:///d:/Gitrepo/DAT1/reports/13_ultimate_ai_engineering_optimization_guide.md): SOTA Edge AI Engineering & Optimization Guide.
 - [14_colab_t4_gpu_disconnection_and_limits_research.md](file:///d:/Gitrepo/DAT1/reports/14_colab_t4_gpu_disconnection_and_limits_research.md): Google Colab T4 GPU Disconnect Rules, Limits & Mitigation Guide.
+- [15_tflite_quantization_w8a8_w8a16_deep_dive.md](file:///d:/Gitrepo/DAT1/reports/15_tflite_quantization_w8a8_w8a16_deep_dive.md): Deep-Dive TFLite Quantization Research Report (W8A8, W8A16, FP16, FP32).
