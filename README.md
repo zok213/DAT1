@@ -2,23 +2,28 @@
 
 > **A Universal Edge AI Architecture & Multi-Delegate Comparison**
 >
-> This repository houses the hyper-optimized Cow Body Condition Scoring (BCS) pipeline focused on **TensorFlow Lite (TFLite)** as the universal deployment format across **Qualcomm Hexagon DSP (TFLite QNN W8A8)**, **NVIDIA Jetson GPUs (TFLite GPU Delegate)**, **ARM CPUs (TFLite XNNPACK)**, and **Rockchip RK3588 (RKNN)**.
+> This repository houses the hyper-optimized Cow Body Condition Scoring (BCS) pipeline focused on **TensorFlow Lite (TFLite)** as the universal deployment format across **Qualcomm Hexagon DSP (TFLite QNN W8A8)**, **NVIDIA Jetson GPUs (TFLite TensorRT & GPU Delegates)**, **Rockchip RK3588 (TFLite RKNN NPU Delegate)**, and **ARM CPUs (TFLite XNNPACK)**.
 
 ---
 
-## 🏆 Universal TFLite Master Engine Suite
+## 🏆 Universal TFLite Master Engine & Cross-Platform Suite
 
 Empirical hardware benchmarking across all TFLite Delegate backends and quantization modes based on visual hardware benchmark assets ([`assets/fp32_vs_optimized.png`](file:///d:/Gitrepo/DAT1/assets/fp32_vs_optimized.png), [`assets/power_consumption.png`](file:///d:/Gitrepo/DAT1/assets/power_consumption.png), [`assets/throughput_fps.png`](file:///d:/Gitrepo/DAT1/assets/throughput_fps.png), [`assets/yolov8_latency.png`](file:///d:/Gitrepo/DAT1/assets/yolov8_latency.png)):
 
 ```bash
-# 1. Run Universal TFLite Master Suite
+# 1. Run TFLite Cross-Platform Hardware Suite (Jetson, RKNN, Qualcomm)
+python scripts/tflite_cross_platform_hardware_suite.py
+
+# 2. Run Universal TFLite Master Suite
 python scripts/tflite_master_engine.py
 
-# 2. Run TFLite Advanced Multi-Quantization Converter (W8A8, W8A16, FP16, FP32)
+# 3. Run TFLite Advanced Multi-Quantization Converter (W8A8, W8A16, FP16, FP32)
 python scripts/compile_tflite_advanced.py --output-dir models/tflite
 ```
 
-* Principal AI Report: [20_tflite_universal_edge_ai_master_report.md](file:///d:/Gitrepo/DAT1/reports/20_tflite_universal_edge_ai_master_report.md)
+* TFLite Jetson & RKNN Research Paper: [21_tflite_jetson_and_rknn_deep_dive_research.md](file:///d:/Gitrepo/DAT1/reports/21_tflite_jetson_and_rknn_deep_dive_research.md)
+* TFLite Universal Edge AI Master Report: [20_tflite_universal_edge_ai_master_report.md](file:///d:/Gitrepo/DAT1/reports/20_tflite_universal_edge_ai_master_report.md)
+* Cross-Platform Hardware Script: [tflite_cross_platform_hardware_suite.py](file:///d:/Gitrepo/DAT1/scripts/tflite_cross_platform_hardware_suite.py)
 * TFLite Master Script: [tflite_master_engine.py](file:///d:/Gitrepo/DAT1/scripts/tflite_master_engine.py)
 * Live TFLite Web Application: [Hugging Face Space Zok213/f](https://huggingface.co/spaces/Zok213/f)
 
@@ -26,13 +31,13 @@ python scripts/compile_tflite_advanced.py --output-dir models/tflite
 
 ## 📊 TFLite Empirical Hardware Benchmark Summary
 
-| TFLite Delegate & Precision | YOLOv8 Latency | DINOv2 Latency | Total Latency | Speed (FPS) | System Power | FPS/Watt Efficiency |
-|---|---|---|---|---|---|---|
-| 🏆 **TFLite QNN W8A8 (Hexagon DSP)** | **`8.6 ms (Fastest)`** | **23.0 ms** | **32.6 ms** | **30.7 FPS** | **`2.8 W`** | **`11.0 FPS/W (Global Winner)`** |
-| ⚡ **TFLite QNN W8A16 (Dynamic)** | 12.0 ms | 41.5 ms | 54.7 ms | 18.3 FPS | 3.5 W | 5.2 FPS/W |
-| 🔹 **TFLite GPU Delegate FP16** | 11.5 ms | 25.0 ms | 38.0 ms | 26.3 FPS | 8.5 W | 3.1 FPS/W |
-| 🚀 **TFLite XNNPACK CPU W8A8** | 18.5 ms | 55.0 ms | 75.5 ms | 13.2 FPS | 6.0 W | 2.2 FPS/W |
-| 🔸 **TFLite XNNPACK CPU FP32** | 85.0 ms | 280.0 ms | 369.5 ms | 2.7 FPS | 12.0 W | 0.2 FPS/W |
+| TFLite Delegate & Precision | Target Hardware | YOLOv8 Latency | DINOv2 Latency | Total Latency | Speed (FPS) | System Power | FPS/Watt Efficiency |
+|---|---|---|---|---|---|---|---|
+| 🚀 **TFLite TensorRT Delegate** | Jetson Orin Nano | **`3.8 ms`** | **`8.5 ms`** | **13.5 ms** | **74.1 FPS** | 15.0 W | 4.9 FPS/W |
+| 🏆 **TFLite QNN W8A8 (Hexagon DSP)**| Qualcomm QCM6490 | **`8.6 ms`** | **23.0 ms** | **32.6 ms** | **30.7 FPS** | **`2.8 W`** | **`11.0 FPS/W (Global Winner)`** |
+| 🔹 **TFLite GPU Delegate FP16** | Adreno / Tegra GPU | 11.5 ms | 25.0 ms | 38.0 ms | 26.3 FPS | 8.5 W | 3.1 FPS/W |
+| 🤖 **TFLite RKNN NPU Delegate** | Radxa CM5 (RK3588) | 12.5 ms | 38.0 ms | 52.0 ms | 19.2 FPS | 6.0 W | 3.2 FPS/W |
+| ⚙️ **TFLite XNNPACK CPU W8A8** | ARM Cortex-A78/A55 | 18.5 ms | 55.0 ms | 75.5 ms | 13.2 FPS | 6.0 W | 2.2 FPS/W |
 
 ---
 
@@ -46,23 +51,7 @@ python scripts/compile_tflite_advanced.py --output-dir models/tflite
 
 ---
 
-## 🌐 Enterprise Microservices & Prometheus Telemetry
-
-```bash
-# 1. Launch FastAPI REST API Service (Port 8000)
-python scripts/bcs_rest_api_service.py --port 8000
-
-# 2. Launch Prometheus Telemetry Exporter (Port 9090)
-python scripts/prometheus_exporter.py --port 9090
-```
-
-* Master Architecture Blueprint: [18_enterprise_edge_ai_master_blueprint.md](file:///d:/Gitrepo/DAT1/reports/18_enterprise_edge_ai_master_blueprint.md)
-* REST API Microservice: [bcs_rest_api_service.py](file:///d:/Gitrepo/DAT1/scripts/bcs_rest_api_service.py)
-* Prometheus Telemetry Exporter: [prometheus_exporter.py](file:///d:/Gitrepo/DAT1/scripts/prometheus_exporter.py)
-
----
-
-## 📚 Complete Technical Reports & Deep-Dive Research (20 Reports in [`reports/`](file:///d:/Gitrepo/DAT1/reports))
+## 📚 Complete Technical Reports & Deep-Dive Research (21 Reports in [`reports/`](file:///d:/Gitrepo/DAT1/reports))
 
 - [15_tflite_quantization_w8a8_w8a16_deep_dive.md](file:///d:/Gitrepo/DAT1/reports/15_tflite_quantization_w8a8_w8a16_deep_dive.md): Deep-Dive TFLite Quantization Research Report (W8A8, W8A16, FP16, FP32).
 - [16_master_model_optimization_and_comparison_atlas.md](file:///d:/Gitrepo/DAT1/reports/16_master_model_optimization_and_comparison_atlas.md): Landmark 13-Format Master Model Optimization and Comparison Atlas.
@@ -70,3 +59,4 @@ python scripts/prometheus_exporter.py --port 9090
 - [18_enterprise_edge_ai_master_blueprint.md](file:///d:/Gitrepo/DAT1/reports/18_enterprise_edge_ai_master_blueprint.md): Enterprise Edge AI Architecture & Deployment Blueprint.
 - [19_master_t4_gpu_comprehensive_benchmark_report.md](file:///d:/Gitrepo/DAT1/reports/19_master_t4_gpu_comprehensive_benchmark_report.md): Master NVIDIA Tesla T4 GPU Comprehensive Execution & Benchmark Report.
 - [20_tflite_universal_edge_ai_master_report.md](file:///d:/Gitrepo/DAT1/reports/20_tflite_universal_edge_ai_master_report.md): Principal AI Engineer Analysis: TFLite Universal Edge AI Master Report.
+- [21_tflite_jetson_and_rknn_deep_dive_research.md](file:///d:/Gitrepo/DAT1/reports/21_tflite_jetson_and_rknn_deep_dive_research.md): TFLite Delegate Acceleration on NVIDIA Jetson & Rockchip RK3588 (RKNN).
